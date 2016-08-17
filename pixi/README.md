@@ -19,6 +19,8 @@ please download it directly from their [website](http://www.pixijs.com).
 ```xml
   <ItemGroup>
     <Reference Include="node_modules/fable-core/Fable.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="node_modules/fable-import-pixi/Fable.Import.Pixi.fs" />
   </ItemGroup>
 ```

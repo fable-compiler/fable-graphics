@@ -19,6 +19,8 @@ while `three` as a value containing global methods is lower case.
 ```xml
   <ItemGroup>
     <Reference Include="node_modules/fable-core/Fable.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="node_modules/fable-import-three/Fable.Import.Three.fs" />
   </ItemGroup>
 ```

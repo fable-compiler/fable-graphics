@@ -19,6 +19,8 @@ while variables containing global methods are lower case.
 ```xml
   <ItemGroup>
     <Reference Include="node_modules/fable-core/Fable.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="node_modules/fable-import-d3/Fable.Import.D3.fs" />
   </ItemGroup>
 ```
