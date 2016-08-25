@@ -10,11 +10,11 @@ $ npm install --save-dev fable-import-pixi
 ```
 
 > Note: Pixi.js is not available in npm in prebuilt form,
-please download it directly from their [website](http://www.pixijs.com). 
+please download it directly from their [website](http://www.pixijs.com).
 
 ## Usage
 
-### In a F# project (.fsproj)
+### F# project (.fsproj)
 
 ```xml
   <ItemGroup>
@@ -25,7 +25,7 @@ please download it directly from their [website](http://www.pixijs.com).
   </ItemGroup>
 ```
 
-### In a F# script (.fsx)
+### F# script (.fsx)
 
 ```fsharp
 #r "node_modules/fable-core/Fable.Core.dll"

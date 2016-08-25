@@ -391,19 +391,20 @@ module PIXI =
     and ParticleShader =
         interface end
 
+    [<KeyValueList>]
     and RendererOptions =
-        abstract view: HTMLCanvasElement option with get, set
-        abstract transparent: bool option with get, set
-        abstract antialias: bool option with get, set
-        abstract autoResize: bool option with get, set
-        abstract resolution: float option with get, set
-        abstract clearBeforeRendering: bool option with get, set
-        abstract preserveDrawingBuffer: bool option with get, set
-        abstract forceFXAA: bool option with get, set
-        abstract roundPixels: bool option with get, set
-        abstract backgroundColor: float option with get, set
+        | View of HTMLCanvasElement
+        | Transparent of bool
+        | Antialias of bool
+        | AutoResize of bool
+        | Resolution of float
+        | ClearBeforeRendering of bool
+        | PreserveDrawingBuffer of bool
+        | ForceFXAA of bool
+        | RoundPixels of bool
+        | BackgroundColor of float
 
-    and [<Import("SystemRenderer","PIXI")>] SystemRenderer(system: string, ?width: float, ?height: float, ?options: RendererOptions) =
+    and [<Import("SystemRenderer","PIXI")>] SystemRenderer(system: string, ?width: float, ?height: float, ?options: RendererOptions list) =
         inherit EventEmitter()
         member __._backgroundColor with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __._backgroundColorRgb with get(): ResizeArray<float> = failwith "JS only" and set(v: ResizeArray<float>): unit = failwith "JS only"
@@ -426,7 +427,7 @@ module PIXI =
         member __.resize(width: float, height: float): unit = failwith "JS only"
         member __.destroy(?removeView: bool): unit = failwith "JS only"
 
-    and [<Import("CanvasRenderer","PIXI")>] CanvasRenderer(?width: float, ?height: float, ?options: RendererOptions) =
+    and [<Import("CanvasRenderer","PIXI")>] CanvasRenderer(?width: float, ?height: float, ?options: RendererOptions list) =
         inherit SystemRenderer("")
         member __.context with get(): CanvasRenderingContext2D = failwith "JS only" and set(v: CanvasRenderingContext2D): unit = failwith "JS only"
         member __.refresh with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
@@ -468,7 +469,7 @@ module PIXI =
         static member tintWithPerPixel(texture: Texture, color: float, canvas: HTMLCanvasElement): unit = failwith "JS only"
         static member roundColor(color: float): float = failwith "JS only"
 
-    and [<Import("WebGLRenderer","PIXI")>] WebGLRenderer(?width: float, ?height: float, ?options: RendererOptions) =
+    and [<Import("WebGLRenderer","PIXI")>] WebGLRenderer(?width: float, ?height: float, ?options: RendererOptions list) =
         inherit SystemRenderer("")
         member __._useFXAA with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
         member __._FXAAFilter with get(): obj (* filters.FXAAFilter *) = failwith "JS only" and set(v: obj (* filters.FXAAFilter *)): unit = failwith "JS only"
@@ -1284,5 +1285,5 @@ module PIXI =
         static member SPRITE_BATCH_SIZE with get(): float = failwith "JS only"
 
         static member loader with get(): loaders.Loader = failwith "JS only"
-        static member autoDetectRenderer(width: float, height: float, ?options: RendererOptions, ?noWebGL: bool): U2<WebGLRenderer, CanvasRenderer> = failwith "JS only"
+        static member autoDetectRenderer(width: float, height: float, ?options: RendererOptions list, ?noWebGL: bool): U2<WebGLRenderer, CanvasRenderer> = failwith "JS only"
 
