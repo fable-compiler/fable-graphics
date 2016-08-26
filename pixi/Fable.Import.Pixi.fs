@@ -4,6 +4,9 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 namespace Fable.Import
+
+#nowarn "1182"
+
 open System
 open Fable.Core
 open Fable.Import.JS
@@ -391,8 +394,7 @@ module PIXI =
     and ParticleShader =
         interface end
 
-    [<KeyValueList>]
-    and RendererOptions =
+    and [<KeyValueList>] RendererOptions =
         | View of HTMLCanvasElement
         | Transparent of bool
         | Antialias of bool
