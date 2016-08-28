@@ -1297,29 +1297,6 @@ module PIXI =
         type [<Import("ticker","PIXI")>] Globals =
             static member shared with get(): Ticker = failwith "JS only" and set(v: Ticker): unit = failwith "JS only"
 
-    module GroupD8 =
-        type [<Import("GroupD8","PIXI")>] Globals =
-            static member E with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member MIRROR_HORIZONTAL with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member MIRROR_VERTICAL with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member N with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member NE with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member NW with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member S with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member SE with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member SW with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member W with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
-            static member add(rotationSecond: float, rotationFirst: float): float = failwith "JS only"
-            static member byDirection(dx: float, dy: float): float = failwith "JS only"
-            static member inv(rotation: float): float = failwith "JS only"
-            static member isSwapWidthHeight(rotation: float): bool = failwith "JS only"
-            static member matrixAppendRotationInv(matrix: Matrix, rotation: float, tx: float, ty: float): unit = failwith "JS only"
-            static member rotate180(rotation: float): float = failwith "JS only"
-            static member sub(rotationSecond: float, rotationFirst: float): float = failwith "JS only"
-            static member uX(ind: float): float = failwith "JS only"
-            static member uY(ind: float): float = failwith "JS only"
-            static member vX(ind: float): float = failwith "JS only"
-            static member vY(ind: float): float = failwith "JS only"
     type [<Import("*","PIXI")>] Globals =
         static member VERSION with get(): string = failwith "JS only"
         static member PI_2 with get(): float = failwith "JS only"
