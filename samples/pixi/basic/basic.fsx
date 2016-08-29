@@ -2,12 +2,12 @@
  - title: Basic sample
  - tagline: Basic sample implemented with fable-pixi
  - app-style: width:800px; margin:20px auto 50px auto;
- - require-paths: `'PIXI':'lib/pixi.min.js'`
+ - require-paths: `'PIXI':'https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min'`
  - intro: This is a port from [basic sample](http://pixijs.github.io/examples/#/basics/basic.js)
 *)
 
 #r "node_modules/fable-core/Fable.Core.dll"
-#load "../../bindings/fable-import-pixi/Fable.Import.Pixi.fs"
+#load "../../../bindings/fable-import-pixi/Fable.Import.Pixi.fs"
 
 open System
 open Fable.Core
@@ -31,7 +31,7 @@ gameDiv.appendChild( renderer.view )
 let stage = new Container()
 
 // create a texture from an image path
-let texture = Texture.fromImage("/public/assets/bunny.png")
+let texture = Texture.fromImage("public/assets/bunny.png")
 
 // create a new Sprite using the texture
 let mutable bunny = Unchecked.defaultof<Sprite>

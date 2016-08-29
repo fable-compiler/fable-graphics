@@ -45,11 +45,9 @@ let temp        = fableRoot </> "temp"
 
 let samplesRoot = fableRoot </> "samples"
 
-let samples=
-    samplesRoot
-    |> directoryInfo
-    |> subDirectories
-    |> Seq.map (fun (di:DirectoryInfo) -> di.FullName)
+let samples =
+    [ "samples/pixi/basic" ]
+
 
 
 printfn "Samples root: %A" samplesRoot
@@ -198,11 +196,12 @@ let compileSample copyOutput name path =
     System.Environment.CurrentDirectory <- fableRoot
 
 
-    NpmHelper.Npm (fun p ->
-        { p with
-            Command = (NpmHelper.Run "build")
-            WorkingDirectory = path
-        })
+    Npm.run path "run" ["build"]
+    // NpmHelper.Npm (fun p ->
+    //     { p with
+    //         Command = (NpmHelper.Run "build")
+    //         WorkingDirectory = path
+    //     })
 //    NpmHelper.run (fun p -> ()) // fableRoot "fable" [path; "-o"; "../../../temp"; "--symbols"; "TUTORIAL"]
     ensureDirectory (output </> "samples" </> name)
 
