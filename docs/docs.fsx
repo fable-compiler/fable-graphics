@@ -46,7 +46,7 @@ let temp        = fableRoot </> "temp"
 let samplesRoot = fableRoot </> "samples"
 
 let samples =
-    [ "samples/pixi/basic" ]
+    [ "samples/pixi/basic", "pixi" ]
 
 
 
@@ -190,7 +190,7 @@ let extractMarkedPagePart tag (page:string) =
 
 
 /// Compile sample using Fable & copy static and JS files to `samples/<name>`
-let compileSample copyOutput name path =
+let compileSample copyOutput name path outerDir =
     // Compile and copy JS files
     CleanDir temp
     System.Environment.CurrentDirectory <- fableRoot
@@ -203,7 +203,7 @@ let compileSample copyOutput name path =
     //         WorkingDirectory = path
     //     })
 //    NpmHelper.run (fun p -> ()) // fableRoot "fable" [path; "-o"; "../../../temp"; "--symbols"; "TUTORIAL"]
-    ensureDirectory (output </> "samples" </> name)
+    ensureDirectory (output </> "samples" </> outerDir </> name)
 
     if copyOutput then
         // Copy compiled JavaScript files
@@ -214,13 +214,13 @@ let compileSample copyOutput name path =
         // Copy subdirectories and static files (except for special ones)
         Directory.GetDirectories(path)
         |> Seq.filter (fun d -> not (d.EndsWith("out")) && not (d.EndsWith("node_modules")))
-        |> Seq.iter (fun d -> CopyDir (output </> "samples" </> name </> (Path.GetFileName d)) d (fun _ -> true))
+        |> Seq.iter (fun d -> CopyDir (output </> "samples" </> outerDir </> name </> (Path.GetFileName d)) d (fun _ -> true))
 
         Directory.GetFiles(path)
         |> Seq.filter (fun d ->
               ["index.html"; ".json"; ".fsx"; ".fsproj"; ".fs"]
               |> Seq.forall (fun s -> not (d.EndsWith(s))) )
-        |> Seq.iter (fun d -> CopyFile (output </> "samples" </> name </> (Path.GetFileName d)) d)
+        |> Seq.iter (fun d -> CopyFile (output </> "samples" </> outerDir </> name </> (Path.GetFileName d)) d)
 
 
 /// Model passed to DotLiquid sample page
@@ -240,7 +240,7 @@ type Sample =
 
 
 /// Generate page from `.fsx` and (optionally) `index.html` files in the sample path
-let generateSamplePage siteRoot name (path: string) =
+let generateSamplePage siteRoot name (path: string) outerDir =
 
     /// Find first `.fsx` file and format it using F# Formatting
     /// (and also extract meta-data from the first paragraph)
@@ -280,8 +280,8 @@ let generateSamplePage siteRoot name (path: string) =
           Tagline = attrs.["tagline"]
           AppStyle = appStyle }
         |> DotLiquid.page samplePage
-    ensureDirectory(output </> "samples" </> name)
-    File.WriteAllText(output </> "samples" </> name </> "index.html", html)
+    ensureDirectory(output </> "samples" </> outerDir </> name)
+    File.WriteAllText(output </> "samples" </> outerDir </> name </> "index.html", html)
 
 
 /// Generates pages from all samples & optionally recompiles the JS too
@@ -290,13 +290,13 @@ let generateSamplePages siteRoot recompile () =
     let lastEdit path = Directory.GetFiles(path) |> Seq.map File.GetLastWriteTime |> Seq.fold max DateTime.MinValue
 
     printfn "Samples: %A" (samples |> Seq.toList)
-    for sample in samples do
+    for sample, outerDir in samples do
         let outOfDate =
-            if Directory.Exists(output </> "samples" </> Path.GetFileName(sample)) |> not
+            if Directory.Exists(output </> "samples" </> outerDir </> Path.GetFileName(sample)) |> not
             then true
             else
                 let sourceModified = lastEdit (fableRoot </> sample)
-                let outputModified = lastEdit (output </> "samples" </> Path.GetFileName(sample))
+                let outputModified = lastEdit (output </> "samples" </> outerDir </> Path.GetFileName(sample))
                 sourceModified > outputModified
         if outOfDate then
             let name = Path.GetFileName(sample)
@@ -304,7 +304,7 @@ let generateSamplePages siteRoot recompile () =
             generateSamplePage siteRoot name sample
             if recompile then
                 traceImportant (sprintf "Compiling sample: %s" name)
-                compileSample true name sample
+                compileSample true name sample outerDir
 
 
 // --------------------------------------------------------------------------------------
