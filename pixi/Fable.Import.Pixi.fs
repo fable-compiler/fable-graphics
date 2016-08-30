@@ -118,7 +118,7 @@ module PIXI =
         member __.y with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.worldVisible with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
         member __.mask with get(): U2<Graphics, Sprite> option = failwith "JS only" and set(v: U2<Graphics, Sprite> option): unit = failwith "JS only"
-        member __.filters with get(): ResizeArray<AbstractFilter> = failwith "JS only" and set(v: ResizeArray<AbstractFilter>): unit = failwith "JS only"
+        member __.filters with get(): ResizeArray<AbstractFilter> option = failwith "JS only" and set(v: ResizeArray<AbstractFilter> option): unit = failwith "JS only"
         member __.name with get(): string = failwith "JS only" and set(v: string): unit = failwith "JS only"
         member __.interactive with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
         member __.buttonMode with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
