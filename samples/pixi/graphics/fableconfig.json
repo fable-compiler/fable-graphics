@@ -1,0 +1,9 @@
+{
+    "module": "amd",
+    "sourceMaps": true,
+    "projFile": "./graphics.fsx",
+    "outDir": "public",
+    "scripts": {
+        "prebuild": "npm install"
+    }
+}

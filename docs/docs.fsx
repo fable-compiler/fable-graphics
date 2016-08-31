@@ -47,7 +47,15 @@ let samplesRoot = fableRoot </> "samples"
 
 let samples =
     [ "samples/pixi/basic", "pixi"
-      "samples/pixi/blur-filter", "pixi" ]
+      "samples/pixi/graphics", "pixi"
+      "samples/pixi/dragging", "pixi"
+      "samples/pixi/blur-filter", "pixi"
+      "samples/pixi/text", "pixi"
+      "samples/pixi/movieclip", "pixi"
+      "samples/pixi/particle-container", "pixi"
+      "samples/pixi/render-texture", "pixi"
+      "samples/pixi/masking", "pixi" 
+    ]
 
 
 
