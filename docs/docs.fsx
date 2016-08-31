@@ -301,7 +301,7 @@ let generateSamplePages siteRoot recompile () =
         if outOfDate then
             let name = Path.GetFileName(sample)
             traceImportant (sprintf "Generating sample page: %s" name)
-            generateSamplePage siteRoot name sample
+            generateSamplePage siteRoot name sample outerDir
             if recompile then
                 traceImportant (sprintf "Compiling sample: %s" name)
                 compileSample true name sample outerDir
