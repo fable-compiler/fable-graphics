@@ -27,8 +27,8 @@ gameDiv.appendChild( renderer.view )
 let stage = new Container()
 
 let bg = Sprite.fromImage("./public/assets/depth_blur_BG.jpg")
-bg.width = renderer.width
-bg.height = renderer.height
+bg.width <- renderer.width
+bg.height <- renderer.height
 stage.addChild(bg)
 
 let mutable littleDudes = Sprite.fromImage("./public/assets/depth_blur_dudes.jpg")
