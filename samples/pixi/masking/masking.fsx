@@ -41,23 +41,23 @@ container.position.y <- renderer.height / 2.
 
 // add a bunch of sprites
 
-let bgFront =  Sprite.fromImage(" ../_assets/SceneRotate.jpg" )
+let bgFront =  Sprite.fromImage(" ./public/assets/SceneRotate.jpg" )
 bgFront.anchor.x <- 0.5
 bgFront.anchor.y <- 0.5
 
 container.addChild(bgFront)
 
-let light2 =  Sprite.fromImage(" ../_assets/LightRotate2.png" )
+let light2 =  Sprite.fromImage(" ./public/assets/LightRotate2.png" )
 light2.anchor.x <- 0.5
 light2.anchor.y <- 0.5
 container.addChild(light2)
 
-let light1 =  Sprite.fromImage(" ../_assets/LightRotate1.png" )
+let light1 =  Sprite.fromImage(" ./public/assets/LightRotate1.png" )
 light1.anchor.x <- 0.5
 light1.anchor.y <- 0.5
 container.addChild(light1)
 
-let panda =   Sprite.fromImage(" ../_assets/panda.png" )
+let panda =   Sprite.fromImage(" ./public/assets/panda.png" )
 panda.anchor.x <- 0.5
 panda.anchor.y <- 0.5
 
