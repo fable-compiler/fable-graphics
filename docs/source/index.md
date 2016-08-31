@@ -26,7 +26,8 @@ request [for the samples directory](https://github.com/fable-compiler/fable-grap
 
 ### PixiJS
 
-* [Basic - Basic pixi js sample](samples/basic/index.html)
+* [Basic - Basic pixi js sample](samples/pixi/basic/index.html)
+* [Blur Filter - Blur Filter pixi js sample](samples/pixi/blur-filter/index.html)
 
 ### Three.js
 

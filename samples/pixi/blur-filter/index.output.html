@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Pixi F# sample: Blur Filter</title>
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,300,600,700|Roboto+Mono' rel='stylesheet' type='text/css'>
+  <link href="/content/custom.css" rel='stylesheet' type='text/css'>
+  <script src="/content/tips.js"></script>
+  <link rel="stylesheet" type="text/css" href="/content/snippets.css" />
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+
+  </head>
+  <body>
+
+    <!-- [body] -->
+    <div id="game"></div>
+    <!-- [/body] -->
+    <script src="../../scripts/core.min.js"></script>
+    <script src="../../scripts/require.js"></script>
+
+    <script>
+      requirejs.config({
+        // Set the baseUrl to the path of the compiled JS code
+        baseUrl: 'public',
+        paths: {
+          // Explicit path to core lib (relative to baseUrl, omit .js)
+          'fable-core': '../../scripts/fable-core.min',
+          'PIXI': 'https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min'
+        }
+      });
+      // Load the entry file of the app (use array, omit .js)
+      requirejs(["blur-filter"]);
+    </script>
+  </body>
+</html>

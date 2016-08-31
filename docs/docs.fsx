@@ -46,7 +46,8 @@ let temp        = fableRoot </> "temp"
 let samplesRoot = fableRoot </> "samples"
 
 let samples =
-    [ "samples/pixi/basic", "pixi" ]
+    [ "samples/pixi/basic", "pixi"
+      "samples/pixi/blur-filter", "pixi" ]
 
 
 

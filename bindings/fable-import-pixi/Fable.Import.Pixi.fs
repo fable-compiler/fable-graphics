@@ -117,8 +117,8 @@ module PIXI =
         member __.x with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.y with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.worldVisible with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
-        member __.mask with get(): U2<Graphics, Sprite> = failwith "JS only" and set(v: U2<Graphics, Sprite>): unit = failwith "JS only"
-        member __.filters with get(): ResizeArray<AbstractFilter> = failwith "JS only" and set(v: ResizeArray<AbstractFilter>): unit = failwith "JS only"
+        member __.mask with get(): U2<Graphics, Sprite> option = failwith "JS only" and set(v: U2<Graphics, Sprite> option): unit = failwith "JS only"
+        member __.filters with get(): ResizeArray<AbstractFilter> option = failwith "JS only" and set(v: ResizeArray<AbstractFilter> option): unit = failwith "JS only"
         member __.name with get(): string = failwith "JS only" and set(v: string): unit = failwith "JS only"
         member __.interactive with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
         member __.buttonMode with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
@@ -351,14 +351,15 @@ module PIXI =
         member __.EMPTY with get(): Rectangle = failwith "JS only" and set(v: Rectangle): unit = failwith "JS only"
         member __.clone(): Rectangle = failwith "JS only"
 
-    and ParticleContainerProperties =
-        abstract scale: bool option with get, set
-        abstract position: bool option with get, set
-        abstract rotation: bool option with get, set
-        abstract uvs: bool option with get, set
-        abstract alpha: bool option with get, set
-
-    and [<Import("ParticleContainer","PIXI")>] ParticleContainer(?size: float, ?properties: ParticleContainerProperties, ?batchSize: float) =
+    and [<KeyValueList>]
+        ParticleContainerProperties =
+        | Scale of bool 
+        | Position of bool
+        | Rotation of bool 
+        | Uvs of bool
+        | Alpha of bool
+        
+    and [<Import("ParticleContainer","PIXI")>] ParticleContainer(?size: float, ?properties: ParticleContainerProperties list, ?batchSize: float) =
         inherit Container()
         member __._maxSize with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __._batchSize with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
@@ -369,7 +370,7 @@ module PIXI =
         member __.interactiveChildren with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
         member __.blendMode with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.roundPixels with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
-        member __.setProperties(properties: ParticleContainerProperties): unit = failwith "JS only"
+        member __.setProperties(properties: ParticleContainerProperties list): unit = failwith "JS only"
 
     and ParticleBuffer =
         abstract gl: WebGLRenderingContext with get, set
@@ -394,7 +395,8 @@ module PIXI =
     and ParticleShader =
         interface end
 
-    and [<KeyValueList>] RendererOptions =
+    and [<KeyValueList>]
+        RendererOptions =
         | View of HTMLCanvasElement
         | Transparent of bool
         | Antialias of bool
@@ -691,42 +693,43 @@ module PIXI =
         member __.start(): unit = failwith "JS only"
         member __.destroy(): unit = failwith "JS only"
 
-    and TextStyle =
-        abstract font: string option with get, set
-        abstract fill: U2<string, float> option with get, set
-        abstract align: string option with get, set
-        abstract stroke: U2<string, float> option with get, set
-        abstract strokeThickness: float option with get, set
-        abstract wordWrap: bool option with get, set
-        abstract wordWrapWidth: float option with get, set
-        abstract lineHeight: float option with get, set
-        abstract dropShadow: bool option with get, set
-        abstract dropShadowColor: U2<string, float> option with get, set
-        abstract dropShadowAngle: float option with get, set
-        abstract dropShadowDistance: float option with get, set
-        abstract padding: float option with get, set
-        abstract textBaseline: string option with get, set
-        abstract lineJoin: string option with get, set
-        abstract miterLimit: float option with get, set
-
-    and [<Import("Text","PIXI")>] Text(?text: string, ?style: TextStyle, ?resolution: float) =
+    and [<KeyValueList>] 
+        TextStyle =
+        | Font of string
+        | Fill of U2<string,float>
+        | Align of string
+        | Stroke of U2<string,float>
+        | StrokeThickness of float
+        | WordWrap of bool
+        | WordWrapWidth of float
+        | LineHeight of float 
+        | DropShadow of bool 
+        | DropShadowColor of U2<string, float> 
+        | DropShadowAngle of float 
+        | DropShadowDistance of float 
+        | Padding of float 
+        | TextBaseline of string 
+        | LineJoin of string 
+        | MiterLimit of float 
+        
+    and [<Import("Text","PIXI")>] Text(?text: string, ?style: TextStyle list, ?resolution: float) =
         inherit Sprite()
         member __.fontPropertiesCache with get(): obj = failwith "JS only" and set(v: obj): unit = failwith "JS only"
         member __.fontPropertiesCanvas with get(): HTMLCanvasElement = failwith "JS only" and set(v: HTMLCanvasElement): unit = failwith "JS only"
         member __.fontPropertiesContext with get(): CanvasRenderingContext2D = failwith "JS only" and set(v: CanvasRenderingContext2D): unit = failwith "JS only"
         member __._text with get(): string = failwith "JS only" and set(v: string): unit = failwith "JS only"
-        member __._style with get(): TextStyle = failwith "JS only" and set(v: TextStyle): unit = failwith "JS only"
+        member __._style with get(): TextStyle list = failwith "JS only" and set(v: TextStyle list): unit = failwith "JS only"
         member __.canvas with get(): HTMLCanvasElement = failwith "JS only" and set(v: HTMLCanvasElement): unit = failwith "JS only"
         member __.context with get(): CanvasRenderingContext2D = failwith "JS only" and set(v: CanvasRenderingContext2D): unit = failwith "JS only"
         member __.dirty with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
         member __.resolution with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.text with get(): string = failwith "JS only" and set(v: string): unit = failwith "JS only"
-        member __.style with get(): TextStyle = failwith "JS only" and set(v: TextStyle): unit = failwith "JS only"
+        member __.style with get(): TextStyle list = failwith "JS only" and set(v: TextStyle list): unit = failwith "JS only"
         member __.width with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.height with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.updateText(): unit = failwith "JS only"
         member __.updateTexture(): unit = failwith "JS only"
-        member __.determineFontProperties(fontStyle: TextStyle): TextStyle = failwith "JS only"
+        member __.determineFontProperties(fontStyle: TextStyle list): TextStyle list = failwith "JS only"
         member __.wordWrap(text: string): bool = failwith "JS only"
 
     and [<Import("BaseTexture","PIXI")>] BaseTexture(source: U2<HTMLImageElement, HTMLCanvasElement>, ?scaleMode: float, ?resolution: float) =
@@ -784,7 +787,7 @@ module PIXI =
         member __.getBase64(): string = failwith "JS only"
         member __.getCanvas(): HTMLCanvasElement = failwith "JS only"
 
-    and [<Import("Texture","PIXI")>] Texture(baseTexture: BaseTexture, ?frame: Rectangle, ?crop: Rectangle, ?trim: Rectangle, ?rotate: bool) =
+    and [<Import("Texture","PIXI")>] Texture(baseTexture: BaseTexture, ?frame: Rectangle, ?crop: Rectangle, ?trim: Rectangle, ?rotate: float) =
         inherit BaseTexture(unbox null)
         member __.EMPTY with get(): Texture = failwith "JS only" and set(v: Texture): unit = failwith "JS only"
         member __._frame with get(): Rectangle = failwith "JS only" and set(v: Rectangle): unit = failwith "JS only"
@@ -797,7 +800,7 @@ module PIXI =
         member __.width with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.height with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.crop with get(): Rectangle = failwith "JS only" and set(v: Rectangle): unit = failwith "JS only"
-        member __.rotate with get(): bool = failwith "JS only" and set(v: bool): unit = failwith "JS only"
+        member __.rotate with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
         member __.frame with get(): Rectangle = failwith "JS only" and set(v: Rectangle): unit = failwith "JS only"
         static member fromImage(imageUrl: string, ?crossOrigin: bool, ?scaleMode: float): Texture = failwith "JS only"
         static member fromFrame(frameId: string): Texture = failwith "JS only"
@@ -851,13 +854,38 @@ module PIXI =
         static member isWebGLSupported(): bool = failwith "JS only"
         static member sign(n: float): float = failwith "JS only"
 
-    module extras =
-        type BitmapTextStyle =
-            abstract font: U2<string, obj> option with get, set
-            abstract align: string option with get, set
-            abstract tint: float option with get, set
+    and [<Import("GroupD8","PIXI")>] GroupD8 =
+        static member E with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member MIRROR_HORIZONTAL with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member MIRROR_VERTICAL with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member N with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member NE with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member NW with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member S with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member SE with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member SW with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member W with get(): float = failwith "JS only" and set(v: float): unit = failwith "JS only"
+        static member add(rotationSecond: float, rotationFirst: float): float = failwith "JS only"
+        static member byDirection(dx: float, dy: float): float = failwith "JS only"
+        static member inv(rotation: float): float = failwith "JS only"
+        static member isSwapWidthHeight(rotation: float): bool = failwith "JS only"
+        static member matrixAppendRotationInv(matrix: Matrix, rotation: float, tx: float, ty: float): unit = failwith "JS only"
+        static member rotate180(rotation: float): float = failwith "JS only"
+        static member sub(rotationSecond: float, rotationFirst: float): float = failwith "JS only"
+        static member uX(ind: float): float = failwith "JS only"
+        static member uY(ind: float): float = failwith "JS only"
+        static member vX(ind: float): float = failwith "JS only"
+        static member vY(ind: float): float = failwith "JS only"
 
-        and [<Import("extras.BitmapText","PIXI")>] BitmapText(text: string, ?style: BitmapTextStyle) =
+    module extras =
+
+        [<KeyValueList>]
+        type BitmapTextStyle =
+            | Font of U2<string, obj>
+            | Align of string 
+            | Tint of float 
+
+        and [<Import("extras.BitmapText","PIXI")>] BitmapText(text: string, ?style: BitmapTextStyle list) =
             inherit Container()
             member __.fonts with get(): obj = failwith "JS only" and set(v: obj): unit = failwith "JS only"
             member __._glyphs with get(): ResizeArray<Sprite> = failwith "JS only" and set(v: ResizeArray<Sprite>): unit = failwith "JS only"
