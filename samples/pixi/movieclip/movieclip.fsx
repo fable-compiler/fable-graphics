@@ -6,8 +6,8 @@
  - intro: This is a port from [MovieClip sample](http://pixijs.github.io/examples/#/demos/movieclip-demo.js)
 *)
 
-#r "node_modules/fable-core/Fable.Core.dll"
-#load "../../../bindings/fable-import-pixi/Fable.Import.Pixi.fs"
+#r "../../node_modules/fable-core/Fable.Core.dll"
+#load "../../node_modules/fable-import-pixi/Fable.Import.Pixi.fs"
 
 open System
 open Fable.Core
@@ -45,7 +45,7 @@ let onLoad resources =
     explosion.rotation <- Math.random() * Math.PI
     explosion.scale.set(0.75 + Math.random() * 0.5)
     explosion.gotoAndPlay(Math.random() * 27.)
-    stage.addChild(explosion)
+    stage.addChild(explosion) |> ignore
 
   animate 0.
 

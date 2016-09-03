@@ -6,8 +6,8 @@
  - intro: This is a port from [blur filter sample](http://pixijs.github.io/examples/#/filters/blur-filter.js)
 *)
 
-#r "node_modules/fable-core/Fable.Core.dll"
-#load "../../../bindings/fable-import-pixi/Fable.Import.Pixi.fs"
+#r "../../node_modules/fable-core/Fable.Core.dll"
+#load "../../node_modules/fable-import-pixi/Fable.Import.Pixi.fs"
 
 open System
 open Fable.Core

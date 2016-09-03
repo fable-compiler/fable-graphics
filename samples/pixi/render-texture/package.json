@@ -1,19 +1,12 @@
 {
-  "name": "Pixi_FS_samples",
+  "private": true,
+  "name": "fable-pixi-samples",
   "version": "0.0.1",
   "description": "F# port of pixi.js official samples",
   "main": "index.js",
   "scripts": {
-      "build": "node_modules/.bin/fable"
-  },
-  "dependencies": {
-    "core-js": "^2.4.0",
-    "fable-core": "^0.5.5",
-    "requirejs": "^2.2.0"
-  },
-  "devDependencies": {
-    "fable-compiler": "^0.5.9",
-    "pixi.js": "3.0.10"
+      "build": "node ../../node_modules/fable-compiler",
+      "start": "node ../../server"
   },
   "author": "François Nicaise",
   "license": "MIT"

@@ -38,13 +38,13 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="node_modules/fable-core/Fable.Core.dll" />
+    <Reference Include="../samples/node_modules/fable-core/Fable.Core.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="d3/Fable.Import.D3.fs" />
-    <Compile Include="dc/Fable.Import.DC.fs" />
-    <Compile Include="pixi/Fable.Import.Pixi.fs" />
-    <Compile Include="three/Fable.Import.Three.fs" />
+    <Compile Include="fable-import-d3/Fable.Import.D3.fs" />
+    <Compile Include="fable-import-dc/Fable.Import.DC.fs" />
+    <Compile Include="fable-import-pixi/Fable.Import.Pixi.fs" />
+    <Compile Include="fable-import-three/Fable.Import.Three.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>

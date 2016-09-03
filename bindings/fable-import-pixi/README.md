@@ -1,16 +1,16 @@
 # fable-import-pixi
 
-Fable bindings for Pixi.js
+Fable bindings for [PixiJS](http://www.pixijs.com/) v3
 
 ## Installation
 
-```shell
-$ npm install --save fable-core
-$ npm install --save-dev fable-import-pixi
+```sh
+npm install --save fable-core pixi.js@^3.0.0
+npm install --save-dev fable-import-pixi
 ```
 
-> Note: Pixi.js is not available in npm in prebuilt form,
-please download it directly from their [website](http://www.pixijs.com).
+> Note: If you're loading PixiJS on the browser with [require.js](http://requirejs.org/),
+use the prebuilt file: `node_modules/pixi.js/bin/pixi.min.js`
 
 ## Usage
 

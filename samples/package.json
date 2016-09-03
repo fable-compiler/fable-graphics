@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "name": "fable-graphics-samples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "core-js": "^2.4.1",
+    "fable-compiler": "^0.5.11",
+    "fable-core": "^0.5.5",
+    "fable-import-pixi": "0.0.7",
+    "finalhandler": "^0.5.0",
+    "open": "0.0.5",
+    "pixi.js": "^3.0.11",
+    "requirejs": "^2.2.0",
+    "serve-static": "^1.11.1"
+  }
+}
