@@ -22,7 +22,7 @@ let gameDiv = document.getElementById("game")
 gameDiv.appendChild( renderer.view )
 
 // create the root of the scene graph
-let stage = new Container()
+let stage = Container()
 
 let rec animate (dt:float) =
   window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
@@ -30,14 +30,13 @@ let rec animate (dt:float) =
   renderer.render(stage)
 
 let onLoad resources =
-
   // create an array to store the textures
   let explosionTextures = ResizeArray<Texture>()
   for i in 0..25 do
-    Texture.fromFrame("Explosion_Sequence_A " + string (i+1) + ".png")  |> explosionTextures.Add
-
+    Texture.fromFrame(sprintf "Explosion_Sequence_A %i.png" (i+1))
+    |> explosionTextures.Add
   for i in 0..49 do
-    let mutable explosion = new extras.MovieClip(explosionTextures)
+    let explosion = extras.MovieClip(explosionTextures)
     explosion.position.x <- Math.random() * 800.
     explosion.position.y <- Math.random() * 600.
     explosion.anchor.x <- 0.5
@@ -46,11 +45,9 @@ let onLoad resources =
     explosion.scale.set(0.75 + Math.random() * 0.5)
     explosion.gotoAndPlay(Math.random() * 27.)
     stage.addChild(explosion) |> ignore
-
   animate 0.
 
 Globals.loader
   .add("spritesheet","./public/assets/mc.json")
-  .load(System.Func<_,_,_>(fun loader resources ->
-    onLoad(resources)
-  ))
+  .load(Func<_,_,_>(fun _ resources ->
+    onLoad(resources)))

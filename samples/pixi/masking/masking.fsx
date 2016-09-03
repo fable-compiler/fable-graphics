@@ -12,6 +12,7 @@
 open System
 open Fable.Core
 open Fable.Core.JsInterop
+open Fable.Import
 open Fable.Import.PIXI
 open Fable.Import.Browser
 open Fable.Import.JS
@@ -22,10 +23,10 @@ let gameDiv = document.getElementById("game")
 gameDiv.appendChild( renderer.view )
 
 // create the root of the scene graph
-let mutable stage = new Container()
+let stage = Container()
 stage.interactive <- true
 
-let bg =  Sprite.fromImage("./public/assets/BGrotate.jpg" )
+let bg = Sprite.fromImage("./public/assets/BGrotate.jpg")
 
 bg.anchor.x <- 0.5
 bg.anchor.y <- 0.5
@@ -35,29 +36,28 @@ bg.position.y <- renderer.height / 2.
 
 stage.addChild(bg)
 
-let mutable container = new Container()
+let container = Container()
 container.position.x <- renderer.width / 2.
 container.position.y <- renderer.height / 2.
 
 // add a bunch of sprites
-
-let bgFront =  Sprite.fromImage(" ./public/assets/SceneRotate.jpg" )
+let bgFront = Sprite.fromImage("./public/assets/SceneRotate.jpg")
 bgFront.anchor.x <- 0.5
 bgFront.anchor.y <- 0.5
 
 container.addChild(bgFront)
 
-let light2 =  Sprite.fromImage(" ./public/assets/LightRotate2.png" )
+let light2 = Sprite.fromImage("./public/assets/LightRotate2.png")
 light2.anchor.x <- 0.5
 light2.anchor.y <- 0.5
 container.addChild(light2)
 
-let light1 =  Sprite.fromImage(" ./public/assets/LightRotate1.png" )
+let light1 = Sprite.fromImage("./public/assets/LightRotate1.png")
 light1.anchor.x <- 0.5
 light1.anchor.y <- 0.5
 container.addChild(light1)
 
-let panda =   Sprite.fromImage(" ./public/assets/panda.png" )
+let panda = Sprite.fromImage("./public/assets/panda.png")
 panda.anchor.x <- 0.5
 panda.anchor.y <- 0.5
 
@@ -65,8 +65,8 @@ container.addChild(panda)
 
 stage.addChild(container)
 
-// let" s create a moving shape
-let thing = new  Graphics()
+// let's create a moving shape
+let thing = Graphics()
 stage.addChild(thing)
 thing.position.x <- renderer.width / 2.
 thing.position.y <- renderer.height / 2.
@@ -74,62 +74,61 @@ thing.lineStyle(0.)
 
 container.mask <- Some(U2.Case1 thing)
 
-let mutable count = 0.
-
 let onClick() =
   match container.mask with
   | None -> container.mask <- Some(U2.Case1 thing)
   | Some mask -> container.mask <- None
 
-stage?on("click", fun e -> onClick())
-//stage.on_click(fun e -> onClick()) // you can use this too
-stage?on("tap", fun e -> onClick())
+stage.on_click(fun _ -> onClick())
+stage.on_tap(fun _ -> onClick())
 
 let style = [
   Font "bold 12pt Arial"
   Fill (U2.Case1 "white")
 ]
-let mutable help : Fable.Import.PIXI.Text = new Fable.Import.PIXI.Text("Click to turn masking on / off.", style)
+let help = PIXI.Text("Click to turn masking on / off.", style)
 help.position.y <- renderer.height - 26.
 help.position.x <- 10.
 stage.addChild(help)
 
-let rec animate (dt:float) =
+let animate =
+  let mutable count = 0.
+  let rec animate (dt:float) =
+    bg.rotation <- bg.rotation +  0.01
+    bgFront.rotation <- bgFront.rotation - 0.01
 
+    light1.rotation <- light1.rotation + 0.02
+    light2.rotation <- light2.rotation + 0.01
 
-  bg.rotation <- bg.rotation +  0.01
-  bgFront.rotation <- bgFront.rotation - 0.01
+    panda.scale.x <- 1. + Math.sin(count) * 0.04
+    panda.scale.y <- 1. + Math.cos(count) * 0.04
 
-  light1.rotation <- light1.rotation + 0.02
-  light2.rotation <- light2.rotation + 0.01
+    count <- count + 0.1
 
-  panda.scale.x <- 1. + Math.sin(count) * 0.04
-  panda.scale.y <- 1. + Math.cos(count) * 0.04
+    thing.clear() |> ignore
 
-  count <- count + 0.1
+    (*
+      Version specifics:
+      v3: clipping (you should see some edges blinking)
+      v4: no clipping
+    *)
+    thing.beginFill(float 0x8bc5ff, 0.4)  |> ignore
+    let myangle = 20.
+    let mysin = Math.sin(count) * myangle
+    let mycos = Math.cos(count) * myangle
+    thing.moveTo(-120. + mysin, -100. + mycos) |> ignore
+    thing.lineTo(-320. + mycos, 100. + mysin) |> ignore
+    thing.lineTo(120. + mycos, -100. + mysin) |> ignore
+    thing.lineTo(120. + mysin, 100. + mycos) |> ignore
+    thing.lineTo(-120. + mycos, 100. + mysin) |> ignore
+    thing.lineTo(-120. + mysin, -300. + mycos) |> ignore
+    thing.lineTo(-320. + mysin, -100. + mycos) |> ignore
+    thing.rotation <- count * 0.1
 
-  thing.clear() |> ignore
-
-  (*
-    Version specifics:
-    v3: clipping (you should see some edges blinking)
-    v4: no clipping
-  *)
-  thing.beginFill(float 0x8bc5ff, 0.4)  |> ignore
-  let myangle = 20.
-  let mysin = Math.sin(count) * myangle
-  let mycos = Math.cos(count) * myangle
-  thing.moveTo(-120. + mysin, -100. + mycos) |> ignore
-  thing.lineTo(-320. + mycos, 100. + mysin) |> ignore
-  thing.lineTo(120. + mycos, -100. + mysin) |> ignore
-  thing.lineTo(120. + mysin, 100. + mycos) |> ignore
-  thing.lineTo(-120. + mycos, 100. + mysin) |> ignore
-  thing.lineTo(-120. + mysin, -300. + mycos) |> ignore
-  thing.lineTo(-320. + mysin, -100. + mycos) |> ignore
-  thing.rotation <- count * 0.1
-
-  window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
-  renderer.render(stage)
+    window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
+    renderer.render(stage)
+  
+  animate // Return `animate` function with `count` trapped in a closure
 
 // start animating
 animate 0.

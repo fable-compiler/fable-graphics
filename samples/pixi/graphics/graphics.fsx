@@ -16,7 +16,6 @@ open Fable.Import.PIXI
 open Fable.Import.Browser
 open Fable.Import.JS
 
-
 let options = [
   Antialias true
 ]
@@ -29,9 +28,9 @@ let gameDiv = document.getElementById("game")
 gameDiv.appendChild( renderer.view )
 
 // create the root of the scene graph
-let mutable stage = new Container()
+let stage = Container()
 
-let graphics = new Graphics()
+let graphics = Graphics()
 
 // set a fill and line style
 graphics.beginFill(float 0xFF3300)
@@ -75,44 +74,53 @@ graphics.lineTo(600., 300.)
 stage.addChild(graphics)
 
 // let's create a moving shape
-let mutable thing = new Graphics()
+let thing = Graphics()
 stage.addChild(thing)
 thing.position.x <- 620. / 2.
 thing.position.y <- 380. / 2.
 
 let onClick() =
-  graphics.lineStyle( Math.random() * 30., Math.random() * float 0xFFFFFF, 1.) |>ignore
-  graphics.moveTo(Math.random() * 620.,Math.random() * 380.) |>ignore
-  graphics.bezierCurveTo((Math.random() * 620.),Math.random() * 380.,
-    Math.random() * 620.,Math.random() * 380.,
-    Math.random() * 620.,Math.random() * 380.) |> ignore
-  ()
+  graphics.lineStyle(
+    Math.random() * 30., Math.random() * float 0xFFFFFF, 1.) |>ignore
+  graphics.moveTo(
+    Math.random() * 620., Math.random() * 380.) |>ignore
+  graphics.bezierCurveTo(
+    Math.random() * 620., Math.random() * 380.,
+    Math.random() * 620., Math.random() * 380.,
+    Math.random() * 620., Math.random() * 380.) |> ignore
 
 stage.interactive <- true
 // Just click on the stage to draw random lines
-stage?on("click", fun e -> onClick())
-//stage.on_click(fun e -> onClick()) // you can use this too
-stage?on("tap", fun e -> onClick())
+stage.on_click(fun _ -> onClick())
+stage.on_tap(fun _ -> onClick())
 
-let mutable count = 0.
-
-let rec animate (dt:float) =
-
-  thing.clear() |> ignore
-  count <- count + 0.1
-  thing.clear() |> ignore
-  thing.lineStyle(10., float 0xff0000, 1.) |> ignore
-  thing.beginFill(float 0xffFF00, 0.5) |> ignore
-
-  thing.moveTo(-120. + Math.sin(count) * 20., -100. + Math.cos(count)* 20.) |> ignore
-  thing.lineTo( 120. + Math.cos(count) * 20., -100. + Math.sin(count)* 20.) |> ignore
-  thing.lineTo( 120. + Math.sin(count) * 20., 100. + Math.cos(count)* 20.) |> ignore
-  thing.lineTo( -120. + Math.cos(count)* 20., 100. + Math.sin(count)* 20.) |> ignore
-  thing.lineTo( -120. + Math.sin(count) * 20., -100. + Math.cos(count)* 20.) |> ignore
-
-  thing.rotation <- count * 0.1
-  window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
-  renderer.render(stage)
+let animate =
+  let mutable count = 0.
+  let rec animate (dt:float) =
+    thing.clear() |> ignore
+    count <- count + 0.1
+    thing.clear() |> ignore
+    thing.lineStyle(10., float 0xff0000, 1.) |> ignore
+    thing.beginFill(float 0xffFF00, 0.5) |> ignore
+    thing.moveTo(
+      -120. + Math.sin(count) * 20.,
+      -100. + Math.cos(count)* 20.) |> ignore
+    thing.lineTo(
+      120. + Math.cos(count) * 20.,
+      -100. + Math.sin(count)* 20.) |> ignore
+    thing.lineTo(
+      120. + Math.sin(count) * 20.,
+      100. + Math.cos(count)* 20.) |> ignore
+    thing.lineTo(
+      -120. + Math.cos(count)* 20.,
+      100. + Math.sin(count)* 20.) |> ignore
+    thing.lineTo(
+      -120. + Math.sin(count) * 20.,
+      -100. + Math.cos(count)* 20.) |> ignore
+    thing.rotation <- count * 0.1
+    window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
+    renderer.render(stage)
+  animate
 
 // start animating
 animate 0.

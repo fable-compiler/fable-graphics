@@ -28,14 +28,13 @@ let gameDiv = document.getElementById("game")
 gameDiv.appendChild( renderer.view )
 
 // create the root of the scene graph
-let stage = new Container()
+let stage = Container()
 
 // create a texture from an image path
 let texture = Texture.fromImage("public/assets/bunny.png")
 
 // create a new Sprite using the texture
-let mutable bunny = Unchecked.defaultof<Sprite>
-bunny <- Sprite(texture)
+let bunny = Sprite(texture)
 
 // center the sprite's anchor point
 bunny.anchor.x <- 0.5
@@ -56,7 +55,6 @@ let rec animate (dt:float) =
 
   // render the container
   renderer.render(stage)
-
 
 // start animating
 animate 0.

@@ -24,14 +24,14 @@ let gameDiv = document.getElementById("game")
 gameDiv.appendChild( renderer.view )
 
 // create the root of the scene graph
-let stage = new Container()
+let stage = Container()
 
 let bg = Sprite.fromImage("./public/assets/depth_blur_BG.jpg")
 bg.width <- renderer.width
 bg.height <- renderer.height
 stage.addChild(bg)
 
-let mutable littleDudes = Sprite.fromImage("./public/assets/depth_blur_dudes.jpg")
+let littleDudes = Sprite.fromImage("./public/assets/depth_blur_dudes.jpg")
 littleDudes.position.x <- (renderer.width / 2.) - 315.
 littleDudes.position.y <- 200.
 stage.addChild(littleDudes)
@@ -41,26 +41,23 @@ littleRobot.position.x <- (renderer.width / 2.) - 200.
 littleRobot.position.y <- 100.
 stage.addChild(littleRobot)
 
-let mutable blurFilter1 = filters.BlurFilter()
-let mutable blurFilter2 = filters.BlurFilter()
+let blurFilter1 = filters.BlurFilter()
+let blurFilter2 = filters.BlurFilter()
 
 littleDudes.filters <- Some(ResizeArray[|blurFilter1 :> AbstractFilter|])
 littleRobot.filters <- Some(ResizeArray[|blurFilter2 :> AbstractFilter|])
 
-let mutable count = 0.
-
-let rec animate (dt:float) =
-
-  count <- count + 0.005
-
-  let blurAmount = Math.cos(count)
-  let blurAmount2 = Math.sin(count)
-
-  blurFilter1.blur <- 20. * (blurAmount)
-  blurFilter2.blur <- 20. * (blurAmount2)
-
-  window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
-  renderer.render(stage)
+let rec animate =
+  let mutable count = 0.
+  let rec animate (dt:float) =
+    count <- count + 0.005
+    let blurAmount = Math.cos(count)
+    let blurAmount2 = Math.sin(count)
+    blurFilter1.blur <- 20. * (blurAmount)
+    blurFilter2.blur <- 20. * (blurAmount2)
+    window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
+    renderer.render(stage)
+  animate
 
 // start animating
 animate 0.

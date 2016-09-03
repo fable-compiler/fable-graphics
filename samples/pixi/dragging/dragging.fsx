@@ -24,7 +24,7 @@ let gameDiv = document.getElementById("game")
 gameDiv.appendChild( renderer.view )
 
 // create the root of the scene graph
-let stage = new Container()
+let stage = Container()
 
 let texture = Texture.fromImage("./public/assets/bunny.png")
 
@@ -46,11 +46,10 @@ type MyBunny(texture) =
       this?dragging <- false
 
     member this.mousemove() =
-      let isDragging = unbox<bool> this?dragging
-      if isDragging then
+      if unbox this?dragging then
         let newPosition = this?data?getLocalPosition(this?parent)
-        this.position.x <- unbox<float> newPosition?x
-        this.position.y <- unbox<float> newPosition?y
+        this.position.x <- unbox newPosition?x
+        this.position.y <- unbox newPosition?y
 
     member this.touchstart = this.mousedown
     member this.touchend = this.mouseup
@@ -59,7 +58,7 @@ type MyBunny(texture) =
     member this.touchmove = this.mousemove
 
 let createBunny x y =
-  let mutable bunny = MyBunny(texture)
+  let bunny = MyBunny(texture)
   bunny.interactive <- true
   bunny.buttonMode <- true
   bunny.anchor.set(0.5)
@@ -68,10 +67,9 @@ let createBunny x y =
   bunny.position.y <- y
   stage.addChild(bunny)
 
-
 for i in 0..9 do
-  let x = float( Math.floor( Math.random() * 800.))
-  let y = float( Math.floor( Math.random() * 600.))
+  let x = Math.floor(Math.random() * 800.)
+  let y = Math.floor(Math.random() * 600.)
   createBunny x y |> ignore
 
 let rec animate (dt:float) =
