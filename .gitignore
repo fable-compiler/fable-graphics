@@ -252,5 +252,4 @@ paket-files/
 *.sln.iml
 docs/output
 temp/
-**/public/*.js
-**/public/*.js.map
+.DS_Store
