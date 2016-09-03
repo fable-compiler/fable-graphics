@@ -26,7 +26,7 @@ define(["exports", "PIXI", "fable-core"], function (exports, _PIXI, _fableCore) 
     }
   }
 
-  var renderer = exports.renderer = PIXI.autoDetectRenderer(800, 600);
+  var renderer = exports.renderer = PIXI.autoDetectRenderer(620, 400);
   var gameDiv = exports.gameDiv = document.getElementById("game");
   gameDiv.appendChild(renderer.view);
   var stage = exports.stage = new _PIXI.Container();
