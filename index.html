@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Maxime Mangel">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,300,600,700|Roboto+Mono' rel='stylesheet' type='text/css'>
+    <link href="/content/custom.css" rel='stylesheet' type='text/css'>
+    <script src="/content/tips.js"></script>
+    <link rel="stylesheet" type="text/css" href="/content/snippets.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <script language="javascript" type="text/javascript">
+      function init() {
+          try {
+            websocket = new WebSocket("ws://"+window.location.host+"/websocket");
+            websocket.onmessage = function(evt) { location.reload(); };
+          } catch(e) { /* For local development only */ }
+      }
+      window.addEventListener("load", init, false);
+    </script>
+    
+  <title>Fable-graphics - F# |> BABEL</title>
+  <meta name="description" content="Explore Fable-graphics through demos!">
+
+</head>
+<body>
+
+  <div class="fb-navbar">
+  <div class="container">
+  <nav class="navbar navbar-default">
+    <div class="navbar-wrapper">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="//fable-compiler.github.io/fable-graphics">Fable</a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="//fable-compiler.github.io/fable-graphics">home</a></li>
+          <!--<li class=""><a href="//fable-compiler.github.io/fable-graphics/samples.html">samples</a></li>-->
+<!--          <li class=""><a href="//fable-compiler.github.io/fable-graphics/docs.html">docs</a></li>-->
+          <li><a href="https://github.com/fable-compiler/fable-graphics">source</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  </div>
+  </div>
+
+  <div class="fb-content-wrapper">
+  
+<div class="fb-heading">
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>Fable-graphics</h1>
+      <p>Explore Fable-graphics through demos!</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="container fb-content">
+  <div class="row">
+    <div class="col-md-1 col-lg-2"></div>
+    <div class="col-sm-12 col-md-10 col-lg-8">
+      <p>Fable-graphics is a project grouping several binding for graphics library with Fable.</p>
+<p>The current bindings available are:</p>
+<ul>
+<li><a href="http://dc-js.github.io/dc.js/">dc.js</a></li>
+<li><a href="https://d3js.org/">d3js</a></li>
+<li><a href="http://www.pixijs.com/">PixiJS</a> (only v3 for the moment)</li>
+<li><a href="http://threejs.org/">Three.js</a></li>
+</ul>
+<p>You can also contribute more examples by sending us a pull
+request <a href="https://github.com/fable-compiler/fable-graphics/tree/master/samples">for the samples directory</a>!</p>
+<h2><a name="Samples" class="anchor" href="#Samples">Samples</a></h2>
+<h3><a name="dc-js" class="anchor" href="#dc-js">dc.js</a></h3>
+<p><em>No sample available for the moment</em></p>
+<h3><a name="d3-js" class="anchor" href="#d3-js">d3.js</a></h3>
+<p><em>No sample available for the moment</em></p>
+<h3><a name="PixiJS" class="anchor" href="#PixiJS">PixiJS</a></h3>
+<p>Here is a selection of some official Pixi.js sampes ported to F#/Fable.
+They work with Pixi.js v3.0.11 and v4.x.x although we don't support v4 officially at the moment.</p>
+<p>Each sample displays both the resulting animation and the F# source code</p>
+<ul>
+<li><a href="samples/pixi/basic/index.html">Basic - Your very first pixi sample</a></li>
+<li><a href="samples/pixi/graphics/index.html">Graphics - How to use the graphics API</a></li>
+<li><a href="samples/pixi/dragging/index.html">Dragging - Play with mouse events and add interactivity</a></li>
+<li><a href="samples/pixi/blur-filter/index.html">Blur Filter - How to use a common filter</a></li>
+<li><a href="samples/pixi/text/index.html">Text - Add simple text and bitmap text with style!</a></li>
+<li><a href="samples/pixi/movieclip/index.html">MovieClip - Load your spritesheet in a movieclip fashion</a></li>
+<li><a href="samples/pixi/particle-container/index.html">Particles - Zounds of sprites with  ParticleContainer!</a></li>
+<li><a href="samples/pixi/render-texture/index.html">Render Texture - Eye bleeding effects! </a></li>
+<li><a href="samples/pixi/masking/index.html">Masking - Masking unleashed! </a></li>
+</ul>
+<h3><a name="Three-js" class="anchor" href="#Three-js">Three.js</a></h3>
+<p><em>No sample available for the moment</em></p>
+
+
+
+    </div>
+    <div class="col-md-1 col-lg-2"></div>
+  </div>
+</div>
+
+  </div>
+
+  <a class="gh-forkme" href="https://github.com/fable-compiler/fable-graphics"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+</body>
+</html>
