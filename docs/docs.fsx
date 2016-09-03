@@ -30,7 +30,6 @@ open Fake.Git
 
 // Where to push generated documentation
 let publishSite = "//fable-compiler.github.io/fable-graphics"
-//let githubLink = "http://github.com/fable-compiler/fable-virtualdom"
 let githubLink = "git@github.com:fable-compiler/fable-graphics.git"
 let publishBranch = "gh-pages"
 
@@ -249,7 +248,7 @@ type Sample =
 
 
 /// Generate page from `.fsx` and (optionally) `index.html` files in the sample path
-let generateSamplePage siteRoot name (path: string) outerDir =
+let generateSamplePage siteRoot dir name (path: string) outerDir =
 
     /// Find first `.fsx` file and format it using F# Formatting
     /// (and also extract meta-data from the first paragraph)
@@ -272,7 +271,7 @@ let generateSamplePage siteRoot name (path: string) outerDir =
         else "", "" ),
       ( if attrs.ContainsKey("app-style") then attrs.["app-style"] else "" )
 
-    let githubLink = sprintf "https://github.com/fable-compiler/fable-virtualdom/tree/master/samples/%s" name
+    let githubLink = sprintf "https://github.com/fable-compiler/fable-graphics/tree/master/samples/%s/%s" dir name
     // Require paths are specified using ` .. ` - drop <code>
     let requirePaths =
       if not (attrs.ContainsKey("require-paths")) then "" else
@@ -308,9 +307,10 @@ let generateSamplePages siteRoot recompile () =
                 let outputModified = lastEdit (output </> "samples" </> outerDir </> Path.GetFileName(sample))
                 sourceModified > outputModified
         if outOfDate then
+            let dir = Path.GetFileName(Path.GetDirectoryName(sample))
             let name = Path.GetFileName(sample)
             traceImportant (sprintf "Generating sample page: %s" name)
-            generateSamplePage siteRoot name sample outerDir
+            generateSamplePage siteRoot dir name sample outerDir
             if recompile then
                 traceImportant (sprintf "Compiling sample: %s" name)
                 compileSample true name sample outerDir
