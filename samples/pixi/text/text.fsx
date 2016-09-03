@@ -21,6 +21,9 @@ let renderer =
   Globals.autoDetectRenderer( 620., 400. )
   |> unbox<SystemRenderer>
 
+renderer.view.style.display <- "block"
+renderer.view.style.margin <- "0 auto"
+
 let gameDiv = document.getElementById("game")
 gameDiv.appendChild( renderer.view )
 
