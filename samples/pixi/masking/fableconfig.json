@@ -1,0 +1,9 @@
+{
+    "module": "amd",
+    "sourceMaps": true,
+    "projFile": "./masking.fsx",
+    "outDir": "public",
+    "scripts": {
+        "prebuild": "npm install"
+    }
+}
