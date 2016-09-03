@@ -1,4 +1,4 @@
-define(["exports", "PIXI"], function (exports, _PIXI) {
+define(["exports", "PIXI", "fable-core"], function (exports, _PIXI, _fableCore) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -45,7 +45,9 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
     for (var i = 0; i <= 25; i++) {
       (function (arg00) {
         explosionTextures.push(arg00);
-      })(_PIXI.Texture.fromFrame("Explosion_Sequence_A " + String(i + 1) + ".png"));
+      })(_PIXI.Texture.fromFrame(_fableCore.String.fsFormat("Explosion_Sequence_A %i.png")(function (x) {
+        return x;
+      })(i + 1)));
     }
 
     for (var i = 0; i <= 49; i++) {
@@ -63,7 +65,7 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
     animate(0);
   }
 
-  PIXI.loader.add("spritesheet", "./public/assets/mc.json").load(function (loader, resources) {
+  PIXI.loader.add("spritesheet", "./public/assets/mc.json").load(function (_arg1, resources) {
     onLoad(resources);
   });
 });

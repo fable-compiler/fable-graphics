@@ -115,9 +115,7 @@ define(["exports", "PIXI", "fable-core"], function (exports, _PIXI, _fableCore) 
     }, {
       key: "mousemove",
       value: function mousemove() {
-        var isDragging = this.dragging;
-
-        if (isDragging) {
+        if (this.dragging) {
           var newPosition = this.data.getLocalPosition(this.parent);
           this.position.x = newPosition.x;
           this.position.y = newPosition.y;

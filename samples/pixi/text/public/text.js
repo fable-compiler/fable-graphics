@@ -4,9 +4,8 @@ define(["exports", "PIXI", "fable-core"], function (exports, _PIXI, _fableCore) 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.count = exports.countingText = exports.countingStyle = exports.spinningText = exports.funStyle = exports.textSample = exports.style = exports.background = exports.stage = exports.gameDiv = exports.renderer = undefined;
+  exports.animate = exports.countingText = exports.countingStyle = exports.spinningText = exports.funStyle = exports.textSample = exports.style = exports.background = exports.stage = exports.gameDiv = exports.renderer = undefined;
   exports.onAssetsLoad = onAssetsLoad;
-  exports.animate = animate;
 
   var PIXI = _interopRequireWildcard(_PIXI);
 
@@ -40,7 +39,7 @@ define(["exports", "PIXI", "fable-core"], function (exports, _PIXI, _fableCore) 
     var bitmapFontText = new _PIXI.extras.BitmapText("bitmap fonts are\n now supported", fontStyle);
     bitmapFontText.position.x = 600 - bitmapFontText.textWidth;
     bitmapFontText.position.y = 20;
-    return stage.addChild(bitmapFontText);
+    stage.addChild(bitmapFontText);
   }
 
   var background = exports.background = _PIXI.Sprite.fromImage("./public/assets/textDemoBG.jpg");
@@ -78,22 +77,27 @@ define(["exports", "PIXI", "fable-core"], function (exports, _PIXI, _fableCore) 
   stage.addChild(textSample);
   stage.addChild(spinningText);
   stage.addChild(countingText);
-  PIXI.loader.add("desyrel", "./public/assets/desyrel.xml").load(function (loader, resources) {
+  PIXI.loader.add("desyrel", "./public/assets/desyrel.xml").load(function (_arg1, resources) {
     onAssetsLoad(resources);
   });
-  var count = exports.count = 0;
 
-  function animate(dt) {
-    renderer.render(stage);
-    exports.count = count = count + 0.5;
-    countingText.text = _fableCore.String.fsFormat("COUNT 4EVAR: %i")(function (x) {
-      return x;
-    })(Math.floor(Math.floor(count)));
-    spinningText.rotation = spinningText.rotation + 0.03;
-    window.requestAnimationFrame(function (delegateArg0) {
-      animate(delegateArg0);
-    });
-  }
+  var animate = exports.animate = function () {
+    var count = 0;
+
+    var animate = function animate(dt) {
+      renderer.render(stage);
+      count = count + 0.5;
+      countingText.text = _fableCore.String.fsFormat("COUNT 4EVAR: %.0f")(function (x) {
+        return x;
+      })(Math.floor(count));
+      spinningText.rotation = spinningText.rotation + 0.03;
+      window.requestAnimationFrame(function (delegateArg0) {
+        animate(delegateArg0);
+      });
+    };
+
+    return animate;
+  }();
 
   animate(0);
 });

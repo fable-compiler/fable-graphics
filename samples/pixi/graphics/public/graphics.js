@@ -4,9 +4,8 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.count = exports.thing = exports.graphics = exports.stage = exports.gameDiv = exports.renderer = exports.options = undefined;
+  exports.animate = exports.thing = exports.graphics = exports.stage = exports.gameDiv = exports.renderer = exports.options = undefined;
   exports.onClick = onClick;
-  exports.animate = animate;
 
   var PIXI = _interopRequireWildcard(_PIXI);
 
@@ -74,31 +73,36 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
   }
 
   stage.interactive = true;
-  stage.on("click", function (e) {
+  stage.on('click', function (_arg1) {
     onClick();
   });
-  stage.on("tap", function (e) {
+  stage.on('tap', function (_arg2) {
     onClick();
   });
-  var count = exports.count = 0;
 
-  function animate(dt) {
-    thing.clear();
-    exports.count = count = count + 0.1;
-    thing.clear();
-    thing.lineStyle(10, 16711680, 1);
-    thing.beginFill(16776960, 0.5);
-    thing.moveTo(-120 + Math.sin(count) * 20, -100 + Math.cos(count) * 20);
-    thing.lineTo(120 + Math.cos(count) * 20, -100 + Math.sin(count) * 20);
-    thing.lineTo(120 + Math.sin(count) * 20, 100 + Math.cos(count) * 20);
-    thing.lineTo(-120 + Math.cos(count) * 20, 100 + Math.sin(count) * 20);
-    thing.lineTo(-120 + Math.sin(count) * 20, -100 + Math.cos(count) * 20);
-    thing.rotation = count * 0.1;
-    window.requestAnimationFrame(function (delegateArg0) {
-      animate(delegateArg0);
-    });
-    renderer.render(stage);
-  }
+  var animate = exports.animate = function () {
+    var count = 0;
+
+    var animate = function animate(dt) {
+      thing.clear();
+      count = count + 0.1;
+      thing.clear();
+      thing.lineStyle(10, 16711680, 1);
+      thing.beginFill(16776960, 0.5);
+      thing.moveTo(-120 + Math.sin(count) * 20, -100 + Math.cos(count) * 20);
+      thing.lineTo(120 + Math.cos(count) * 20, -100 + Math.sin(count) * 20);
+      thing.lineTo(120 + Math.sin(count) * 20, 100 + Math.cos(count) * 20);
+      thing.lineTo(-120 + Math.cos(count) * 20, 100 + Math.sin(count) * 20);
+      thing.lineTo(-120 + Math.sin(count) * 20, -100 + Math.cos(count) * 20);
+      thing.rotation = count * 0.1;
+      window.requestAnimationFrame(function (delegateArg0) {
+        animate(delegateArg0);
+      });
+      renderer.render(stage);
+    };
+
+    return animate;
+  }();
 
   animate(0);
 });

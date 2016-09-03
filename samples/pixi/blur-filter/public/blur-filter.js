@@ -4,8 +4,7 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.count = exports.blurFilter2 = exports.blurFilter1 = exports.littleRobot = exports.littleDudes = exports.bg = exports.stage = exports.gameDiv = exports.renderer = undefined;
-  exports.animate = animate;
+  exports.animate = exports.blurFilter2 = exports.blurFilter1 = exports.littleRobot = exports.littleDudes = exports.bg = exports.stage = exports.gameDiv = exports.renderer = undefined;
 
   var PIXI = _interopRequireWildcard(_PIXI);
 
@@ -52,19 +51,24 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
   var blurFilter2 = exports.blurFilter2 = new _PIXI.filters.BlurFilter();
   littleDudes.filters = [blurFilter1];
   littleRobot.filters = [blurFilter2];
-  var count = exports.count = 0;
 
-  function animate(dt) {
-    exports.count = count = count + 0.005;
-    var blurAmount = Math.cos(count);
-    var blurAmount2 = Math.sin(count);
-    blurFilter1.blur = 20 * blurAmount;
-    blurFilter2.blur = 20 * blurAmount2;
-    window.requestAnimationFrame(function (delegateArg0) {
-      animate(delegateArg0);
-    });
-    renderer.render(stage);
-  }
+  var animate = exports.animate = function () {
+    var count = 0;
+
+    var animate = function animate(dt) {
+      count = count + 0.005;
+      var blurAmount = Math.cos(count);
+      var blurAmount2 = Math.sin(count);
+      blurFilter1.blur = 20 * blurAmount;
+      blurFilter2.blur = 20 * blurAmount2;
+      window.requestAnimationFrame(function (delegateArg0) {
+        animate(delegateArg0);
+      });
+      renderer.render(stage);
+    };
+
+    return animate;
+  }();
 
   animate(0);
 });

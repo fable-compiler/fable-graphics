@@ -4,8 +4,7 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.tick = exports.dudeBounds = exports.dudeBoundsPadding = exports.totalSprites = exports.maggots = exports.sprites = exports.options = exports.stage = exports.gameDiv = exports.renderer = exports.isWebGL = exports.specificRenderer = undefined;
-  exports.animate = animate;
+  exports.animate = exports.dudeBounds = exports.dudeBoundsPadding = exports.totalSprites = exports.maggots = exports.sprites = exports.options = exports.stage = exports.gameDiv = exports.isWebGL = exports.renderer = undefined;
 
   var PIXI = _interopRequireWildcard(_PIXI);
 
@@ -26,9 +25,18 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
     }
   }
 
-  var specificRenderer = exports.specificRenderer = PIXI.autoDetectRenderer(800, 600);
-  var isWebGL = exports.isWebGL = true;
-  var renderer = exports.renderer = specificRenderer;
+  var patternInput_19 = function () {
+    var matchValue = PIXI.autoDetectRenderer(800, 600);
+
+    if (matchValue instanceof _PIXI.CanvasRenderer) {
+      return [false, matchValue];
+    } else {
+      return [true, matchValue];
+    }
+  }();
+
+  var renderer = exports.renderer = patternInput_19[1];
+  var isWebGL = exports.isWebGL = patternInput_19[0];
   var gameDiv = exports.gameDiv = document.getElementById("game");
   gameDiv.appendChild(renderer.view);
   var stage = exports.stage = new _PIXI.Container();
@@ -61,42 +69,47 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
 
   var dudeBoundsPadding = exports.dudeBoundsPadding = 100;
   var dudeBounds = exports.dudeBounds = new _PIXI.Rectangle(-dudeBoundsPadding, -dudeBoundsPadding, renderer.width + dudeBoundsPadding * 2, renderer.height + dudeBoundsPadding * 2);
-  var tick = exports.tick = 0;
 
-  function animate(dt) {
-    var dc = maggots.length - 1;
+  var animate = exports.animate = function () {
+    var tick = 0;
 
-    for (var i = 0; i <= dc; i++) {
-      var dude = maggots[i];
-      dude.scale.y = 0.95 + Math.sin(tick + dude.offset) * 0.05;
-      dude.direction = dude.direction + dude.turningSpeed * 0.01;
-      dude.position.x = dude.position.x + Math.sin(dude.direction) * dude.speed * dude.scale.y;
-      dude.position.y = dude.position.y + Math.cos(dude.direction) * dude.speed * dude.scale.y;
-      dude.rotation = -dude.direction - Math.PI;
+    var animate = function animate(dt) {
+      var dc = maggots.length - 1;
 
-      if (dude.position.x < dudeBounds.x) {
-        dude.position.x = dude.position.x + dudeBounds.width;
-      } else {
-        if (dude.position.x > dudeBounds.x + dudeBounds.width) {
-          dude.position.x = dude.position.x - dudeBounds.width;
+      for (var i = 0; i <= dc; i++) {
+        var dude = maggots[i];
+        dude.scale.y = 0.95 + Math.sin(tick + dude.offset) * 0.05;
+        dude.direction = dude.direction + dude.turningSpeed * 0.01;
+        dude.position.x = dude.position.x + Math.sin(dude.direction) * dude.speed * dude.scale.y;
+        dude.position.y = dude.position.y + Math.cos(dude.direction) * dude.speed * dude.scale.y;
+        dude.rotation = -dude.direction - Math.PI;
+
+        if (dude.position.x < dudeBounds.x) {
+          dude.position.x = dude.position.x + dudeBounds.width;
+        } else {
+          if (dude.position.x > dudeBounds.x + dudeBounds.width) {
+            dude.position.x = dude.position.x - dudeBounds.width;
+          }
+        }
+
+        if (dude.position.y < dudeBounds.y) {
+          dude.position.y = dude.position.y + dudeBounds.height;
+        } else {
+          if (dude.position.y > dudeBounds.y + dudeBounds.height) {
+            dude.position.y = dude.position.y - dudeBounds.height;
+          }
         }
       }
 
-      if (dude.position.y < dudeBounds.y) {
-        dude.position.y = dude.position.y + dudeBounds.height;
-      } else {
-        if (dude.position.y > dudeBounds.y + dudeBounds.height) {
-          dude.position.y = dude.position.y - dudeBounds.height;
-        }
-      }
-    }
+      tick = tick + 0.1;
+      window.requestAnimationFrame(function (delegateArg0) {
+        animate(delegateArg0);
+      });
+      renderer.render(stage);
+    };
 
-    exports.tick = tick = tick + 0.1;
-    window.requestAnimationFrame(function (delegateArg0) {
-      animate(delegateArg0);
-    });
-    renderer.render(stage);
-  }
+    return animate;
+  }();
 
   animate(0);
 });

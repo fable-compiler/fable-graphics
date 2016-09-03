@@ -37,8 +37,7 @@ define(["exports", "PIXI"], function (exports, _PIXI) {
 
   var texture = exports.texture = _PIXI.Texture.fromImage("public/assets/bunny.png");
 
-  var bunny = exports.bunny = null;
-  exports.bunny = bunny = new _PIXI.Sprite(texture);
+  var bunny = exports.bunny = new _PIXI.Sprite(texture);
   bunny.anchor.x = 0.5;
   bunny.anchor.y = 0.5;
   bunny.position.x = 200;

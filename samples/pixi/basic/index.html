@@ -159,8 +159,6 @@
 <span class="l">50: </span>
 <span class="l">51: </span>
 <span class="l">52: </span>
-<span class="l">53: </span>
-<span class="l">54: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;../../node_modules/fable-core/Fable.Core.dll&quot;</span>
 <span class="prep">#load</span> <span class="s">&quot;../../node_modules/fable-import-pixi/Fable.Import.Pixi.fs&quot;</span>
@@ -184,38 +182,36 @@
 <span onmouseout="hideTip(event, 'fs17', 26)" onmouseover="showTip(event, 'fs17', 26)" class="i">gameDiv</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 27)" onmouseover="showTip(event, 'fs20', 27)" class="f">appendChild</span>( <span onmouseout="hideTip(event, 'fs12', 28)" onmouseover="showTip(event, 'fs12', 28)" class="i">renderer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs21', 29)" onmouseover="showTip(event, 'fs21', 29)" class="i">view</span> )
 
 <span class="c">// create the root of the scene graph</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 30)" onmouseover="showTip(event, 'fs22', 30)" class="i">stage</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs23', 31)" onmouseover="showTip(event, 'fs23', 31)" class="t">Container</span>()
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 30)" onmouseover="showTip(event, 'fs22', 30)" class="i">stage</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs23', 31)" onmouseover="showTip(event, 'fs23', 31)" class="t">Container</span>()
 
 <span class="c">// create a texture from an image path</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs24', 32)" onmouseover="showTip(event, 'fs24', 32)" class="i">texture</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs25', 33)" onmouseover="showTip(event, 'fs25', 33)" class="t">Texture</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 34)" onmouseover="showTip(event, 'fs26', 34)" class="f">fromImage</span>(<span class="s">&quot;public/assets/bunny.png&quot;</span>)
 
 <span class="c">// create a new Sprite using the texture</span>
-<span class="k">let</span> <span class="k">mutable</span> <span onmouseout="hideTip(event, 'fs27', 35)" onmouseover="showTip(event, 'fs27', 35)" class="v">bunny</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs28', 36)" onmouseover="showTip(event, 'fs28', 36)" class="t">Unchecked</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs29', 37)" onmouseover="showTip(event, 'fs29', 37)" class="i">defaultof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs30', 38)" onmouseover="showTip(event, 'fs30', 38)" class="t">Sprite</span><span class="o">&gt;</span>
-<span onmouseout="hideTip(event, 'fs27', 39)" onmouseover="showTip(event, 'fs27', 39)" class="v">bunny</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs30', 40)" onmouseover="showTip(event, 'fs30', 40)" class="t">Sprite</span>(<span onmouseout="hideTip(event, 'fs24', 41)" onmouseover="showTip(event, 'fs24', 41)" class="i">texture</span>)
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 35)" onmouseover="showTip(event, 'fs27', 35)" class="i">bunny</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs28', 36)" onmouseover="showTip(event, 'fs28', 36)" class="t">Sprite</span>(<span onmouseout="hideTip(event, 'fs24', 37)" onmouseover="showTip(event, 'fs24', 37)" class="i">texture</span>)
 
 <span class="c">// center the sprite&#39;s anchor point</span>
-<span onmouseout="hideTip(event, 'fs27', 42)" onmouseover="showTip(event, 'fs27', 42)" class="v">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 43)" onmouseover="showTip(event, 'fs31', 43)" class="i">anchor</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 44)" onmouseover="showTip(event, 'fs32', 44)" class="i">x</span> <span class="o">&lt;-</span> <span class="n">0.5</span>
-<span onmouseout="hideTip(event, 'fs27', 45)" onmouseover="showTip(event, 'fs27', 45)" class="v">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 46)" onmouseover="showTip(event, 'fs31', 46)" class="i">anchor</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 47)" onmouseover="showTip(event, 'fs33', 47)" class="i">y</span> <span class="o">&lt;-</span> <span class="n">0.5</span>
+<span onmouseout="hideTip(event, 'fs27', 38)" onmouseover="showTip(event, 'fs27', 38)" class="i">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs29', 39)" onmouseover="showTip(event, 'fs29', 39)" class="i">anchor</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 40)" onmouseover="showTip(event, 'fs30', 40)" class="i">x</span> <span class="o">&lt;-</span> <span class="n">0.5</span>
+<span onmouseout="hideTip(event, 'fs27', 41)" onmouseover="showTip(event, 'fs27', 41)" class="i">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs29', 42)" onmouseover="showTip(event, 'fs29', 42)" class="i">anchor</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 43)" onmouseover="showTip(event, 'fs31', 43)" class="i">y</span> <span class="o">&lt;-</span> <span class="n">0.5</span>
 
 <span class="c">// move the sprite</span>
-<span onmouseout="hideTip(event, 'fs27', 48)" onmouseover="showTip(event, 'fs27', 48)" class="v">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 49)" onmouseover="showTip(event, 'fs34', 49)" class="i">position</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 50)" onmouseover="showTip(event, 'fs32', 50)" class="i">x</span> <span class="o">&lt;-</span> <span class="n">200.</span>
-<span onmouseout="hideTip(event, 'fs27', 51)" onmouseover="showTip(event, 'fs27', 51)" class="v">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 52)" onmouseover="showTip(event, 'fs34', 52)" class="i">position</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 53)" onmouseover="showTip(event, 'fs33', 53)" class="i">y</span> <span class="o">&lt;-</span> <span class="n">150.</span>
+<span onmouseout="hideTip(event, 'fs27', 44)" onmouseover="showTip(event, 'fs27', 44)" class="i">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 45)" onmouseover="showTip(event, 'fs32', 45)" class="i">position</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 46)" onmouseover="showTip(event, 'fs30', 46)" class="i">x</span> <span class="o">&lt;-</span> <span class="n">200.</span>
+<span onmouseout="hideTip(event, 'fs27', 47)" onmouseover="showTip(event, 'fs27', 47)" class="i">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 48)" onmouseover="showTip(event, 'fs32', 48)" class="i">position</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 49)" onmouseover="showTip(event, 'fs31', 49)" class="i">y</span> <span class="o">&lt;-</span> <span class="n">150.</span>
 
 <span class="c">// Add the bunny to the scene we are building.</span>
-<span onmouseout="hideTip(event, 'fs22', 54)" onmouseover="showTip(event, 'fs22', 54)" class="i">stage</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs35', 55)" onmouseover="showTip(event, 'fs35', 55)" class="f">addChild</span>(<span onmouseout="hideTip(event, 'fs27', 56)" onmouseover="showTip(event, 'fs27', 56)" class="v">bunny</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs36', 57)" onmouseover="showTip(event, 'fs36', 57)" class="f">ignore</span>
+<span onmouseout="hideTip(event, 'fs22', 50)" onmouseover="showTip(event, 'fs22', 50)" class="i">stage</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 51)" onmouseover="showTip(event, 'fs33', 51)" class="f">addChild</span>(<span onmouseout="hideTip(event, 'fs27', 52)" onmouseover="showTip(event, 'fs27', 52)" class="i">bunny</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs34', 53)" onmouseover="showTip(event, 'fs34', 53)" class="f">ignore</span>
 
-<span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs37', 58)" onmouseover="showTip(event, 'fs37', 58)" class="f">animate</span> (<span onmouseout="hideTip(event, 'fs38', 59)" onmouseover="showTip(event, 'fs38', 59)" class="i">dt</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 60)" onmouseover="showTip(event, 'fs10', 60)" class="t">float</span>) <span class="o">=</span>
-  <span onmouseout="hideTip(event, 'fs39', 61)" onmouseover="showTip(event, 'fs39', 61)" class="i">window</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 62)" onmouseover="showTip(event, 'fs40', 62)" class="f">requestAnimationFrame</span>(<span onmouseout="hideTip(event, 'fs41', 63)" onmouseover="showTip(event, 'fs41', 63)" class="t">FrameRequestCallback</span> <span onmouseout="hideTip(event, 'fs37', 64)" onmouseover="showTip(event, 'fs37', 64)" class="f">animate</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs36', 65)" onmouseover="showTip(event, 'fs36', 65)" class="f">ignore</span>
+<span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs35', 54)" onmouseover="showTip(event, 'fs35', 54)" class="f">animate</span> (<span onmouseout="hideTip(event, 'fs36', 55)" onmouseover="showTip(event, 'fs36', 55)" class="i">dt</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 56)" onmouseover="showTip(event, 'fs10', 56)" class="t">float</span>) <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs37', 57)" onmouseover="showTip(event, 'fs37', 57)" class="i">window</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs38', 58)" onmouseover="showTip(event, 'fs38', 58)" class="f">requestAnimationFrame</span>(<span onmouseout="hideTip(event, 'fs39', 59)" onmouseover="showTip(event, 'fs39', 59)" class="t">FrameRequestCallback</span> <span onmouseout="hideTip(event, 'fs35', 60)" onmouseover="showTip(event, 'fs35', 60)" class="f">animate</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs34', 61)" onmouseover="showTip(event, 'fs34', 61)" class="f">ignore</span>
 
   <span class="c">// just for fun, let&#39;s rotate mr rabbit a little</span>
-  <span onmouseout="hideTip(event, 'fs27', 66)" onmouseover="showTip(event, 'fs27', 66)" class="v">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs42', 67)" onmouseover="showTip(event, 'fs42', 67)" class="i">rotation</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs27', 68)" onmouseover="showTip(event, 'fs27', 68)" class="v">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs42', 69)" onmouseover="showTip(event, 'fs42', 69)" class="i">rotation</span> <span class="o">+</span> <span class="n">0.1</span>
+  <span onmouseout="hideTip(event, 'fs27', 62)" onmouseover="showTip(event, 'fs27', 62)" class="i">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 63)" onmouseover="showTip(event, 'fs40', 63)" class="i">rotation</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs27', 64)" onmouseover="showTip(event, 'fs27', 64)" class="i">bunny</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 65)" onmouseover="showTip(event, 'fs40', 65)" class="i">rotation</span> <span class="o">+</span> <span class="n">0.1</span>
 
   <span class="c">// render the container</span>
-  <span onmouseout="hideTip(event, 'fs12', 70)" onmouseover="showTip(event, 'fs12', 70)" class="i">renderer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs43', 71)" onmouseover="showTip(event, 'fs43', 71)" class="f">render</span>(<span onmouseout="hideTip(event, 'fs22', 72)" onmouseover="showTip(event, 'fs22', 72)" class="i">stage</span>)
-
+  <span onmouseout="hideTip(event, 'fs12', 66)" onmouseover="showTip(event, 'fs12', 66)" class="i">renderer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs41', 67)" onmouseover="showTip(event, 'fs41', 67)" class="f">render</span>(<span onmouseout="hideTip(event, 'fs22', 68)" onmouseover="showTip(event, 'fs22', 68)" class="i">stage</span>)
 
 <span class="c">// start animating</span>
-<span onmouseout="hideTip(event, 'fs37', 73)" onmouseover="showTip(event, 'fs37', 73)" class="f">animate</span> <span class="n">0.</span>
+<span onmouseout="hideTip(event, 'fs35', 69)" onmouseover="showTip(event, 'fs35', 69)" class="f">animate</span> <span class="n">0.</span>
 </code></pre></td>
 </tr>
 </table>
@@ -247,23 +243,21 @@
 <div class="tip" id="fs24">val texture : Texture<br /><br />Full name: Basic.texture</div>
 <div class="tip" id="fs25">Multiple items<br />type Texture =<br />&#160;&#160;inherit BaseTexture<br />&#160;&#160;new : baseTexture:BaseTexture * ?frame:Rectangle * ?crop:Rectangle * ?trim:Rectangle * ?rotate:float -&gt; Texture<br />&#160;&#160;member _updateUvs : unit -&gt; unit<br />&#160;&#160;member clone : unit -&gt; Texture<br />&#160;&#160;member destroy : ?destroyBase:bool -&gt; unit<br />&#160;&#160;member EMPTY : Texture<br />&#160;&#160;member _frame : Rectangle<br />&#160;&#160;member _uvs : TextureUvs<br />&#160;&#160;member baseTexture : BaseTexture<br />&#160;&#160;member crop : Rectangle<br />&#160;&#160;...<br /><br />Full name: Fable.Import.PIXI.Texture<br /><br />--------------------<br />new : baseTexture:BaseTexture * ?frame:Rectangle * ?crop:Rectangle * ?trim:Rectangle * ?rotate:float -&gt; Texture</div>
 <div class="tip" id="fs26">static member Texture.fromImage : imageUrl:string * ?crossOrigin:bool * ?scaleMode:float -&gt; Texture</div>
-<div class="tip" id="fs27">val mutable bunny : Sprite<br /><br />Full name: Basic.bunny</div>
-<div class="tip" id="fs28">module Unchecked<br /><br />from Microsoft.FSharp.Core.Operators</div>
-<div class="tip" id="fs29">val defaultof&lt;&#39;T&gt; : &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.Unchecked.defaultof</div>
-<div class="tip" id="fs30">Multiple items<br />type Sprite =<br />&#160;&#160;inherit Container<br />&#160;&#160;new : ?texture:Texture -&gt; Sprite<br />&#160;&#160;member _onTextureUpdate : unit -&gt; unit<br />&#160;&#160;member containsPoint : point:Point -&gt; bool<br />&#160;&#160;member destroy : ?destroyTexture:bool * ?destroyBaseTexture:bool -&gt; unit<br />&#160;&#160;member getBounds : ?matrix:Matrix -&gt; Rectangle<br />&#160;&#160;member getLocalBounds : unit -&gt; Rectangle<br />&#160;&#160;member _height : float<br />&#160;&#160;member _texture : Texture<br />&#160;&#160;member _width : float<br />&#160;&#160;...<br /><br />Full name: Fable.Import.PIXI.Sprite<br /><br />--------------------<br />new : ?texture:Texture -&gt; Sprite</div>
-<div class="tip" id="fs31">property Sprite.anchor: Point</div>
-<div class="tip" id="fs32">property Point.x: float</div>
-<div class="tip" id="fs33">property Point.y: float</div>
-<div class="tip" id="fs34">property DisplayObject.position: Point</div>
-<div class="tip" id="fs35">member Container.addChild : [&lt;ParamArray&gt;] child:DisplayObject [] -&gt; DisplayObject</div>
-<div class="tip" id="fs36">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
-<div class="tip" id="fs37">val animate : dt:float -&gt; unit<br /><br />Full name: Basic.animate</div>
-<div class="tip" id="fs38">val dt : float</div>
-<div class="tip" id="fs39">val window : Window<br /><br />Full name: Fable.Import.Browser.window</div>
-<div class="tip" id="fs40">abstract member Window.requestAnimationFrame : callback:FrameRequestCallback -&gt; float</div>
-<div class="tip" id="fs41">type FrameRequestCallback = Func&lt;float,unit&gt;<br /><br />Full name: Fable.Import.Browser.FrameRequestCallback</div>
-<div class="tip" id="fs42">property DisplayObject.rotation: float</div>
-<div class="tip" id="fs43">member SystemRenderer.render : object:DisplayObject -&gt; unit</div>
+<div class="tip" id="fs27">val bunny : Sprite<br /><br />Full name: Basic.bunny</div>
+<div class="tip" id="fs28">Multiple items<br />type Sprite =<br />&#160;&#160;inherit Container<br />&#160;&#160;new : ?texture:Texture -&gt; Sprite<br />&#160;&#160;member _onTextureUpdate : unit -&gt; unit<br />&#160;&#160;member containsPoint : point:Point -&gt; bool<br />&#160;&#160;member destroy : ?destroyTexture:bool * ?destroyBaseTexture:bool -&gt; unit<br />&#160;&#160;member getBounds : ?matrix:Matrix -&gt; Rectangle<br />&#160;&#160;member getLocalBounds : unit -&gt; Rectangle<br />&#160;&#160;member _height : float<br />&#160;&#160;member _texture : Texture<br />&#160;&#160;member _width : float<br />&#160;&#160;...<br /><br />Full name: Fable.Import.PIXI.Sprite<br /><br />--------------------<br />new : ?texture:Texture -&gt; Sprite</div>
+<div class="tip" id="fs29">property Sprite.anchor: Point</div>
+<div class="tip" id="fs30">property Point.x: float</div>
+<div class="tip" id="fs31">property Point.y: float</div>
+<div class="tip" id="fs32">property DisplayObject.position: Point</div>
+<div class="tip" id="fs33">member Container.addChild : [&lt;ParamArray&gt;] child:DisplayObject [] -&gt; DisplayObject</div>
+<div class="tip" id="fs34">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
+<div class="tip" id="fs35">val animate : dt:float -&gt; unit<br /><br />Full name: Basic.animate</div>
+<div class="tip" id="fs36">val dt : float</div>
+<div class="tip" id="fs37">val window : Window<br /><br />Full name: Fable.Import.Browser.window</div>
+<div class="tip" id="fs38">abstract member Window.requestAnimationFrame : callback:FrameRequestCallback -&gt; float</div>
+<div class="tip" id="fs39">type FrameRequestCallback = Func&lt;float,unit&gt;<br /><br />Full name: Fable.Import.Browser.FrameRequestCallback</div>
+<div class="tip" id="fs40">property DisplayObject.rotation: float</div>
+<div class="tip" id="fs41">member SystemRenderer.render : object:DisplayObject -&gt; unit</div>
 
     </div>
     <div class="col-md-1 col-lg-2"></div>
