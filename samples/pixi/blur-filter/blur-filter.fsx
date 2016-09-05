@@ -47,17 +47,20 @@ let blurFilter2 = filters.BlurFilter()
 littleDudes.filters <- Some(ResizeArray[|blurFilter1 :> AbstractFilter|])
 littleRobot.filters <- Some(ResizeArray[|blurFilter2 :> AbstractFilter|])
 
-let rec animate =
-  let mutable count = 0.
-  let rec animate (dt:float) =
-    count <- count + 0.005
-    let blurAmount = Math.cos(count)
-    let blurAmount2 = Math.sin(count)
-    blurFilter1.blur <- 20. * (blurAmount)
-    blurFilter2.blur <- 20. * (blurAmount2)
-    window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
-    renderer.render(stage)
-  animate
+let awaitAnimationFrame() =
+  Async.FromContinuations <| fun (cont,_,_) ->
+    window.requestAnimationFrame(FrameRequestCallback cont) |> ignore
+
+let rec animate count = async {
+  let count = count + 0.005
+  let blurAmount = Math.cos(count)
+  let blurAmount2 = Math.sin(count)
+  blurFilter1.blur <- 20. * (blurAmount)
+  blurFilter2.blur <- 20. * (blurAmount2)
+  renderer.render(stage)
+  let! _ = awaitAnimationFrame()
+  return! animate count
+}
 
 // start animating
-animate 0.
+animate 0. |> Async.StartImmediate
