@@ -28,13 +28,13 @@ module Fable =
       | ModelChanged of 'TModel*'TModel
       | ActionReceived of 'TMessage
       | DrawStarted
-      
+
     type Subscriber<'TMessage, 'TModel> = AppEvents<'TMessage, 'TModel> -> unit
 
-    type RenderState = 
+    type RenderState =
       | InProgress
       | NoRequest
-          
+
     type App<'TModel, 'TMessage> =
       {
         Model: 'TModel
@@ -52,7 +52,7 @@ module Fable =
         Canvas: HTMLCanvasElement option
       }
 
-    type ScheduleMessage = 
+    type ScheduleMessage =
       | PingIn of float*(unit -> unit)
 
     type AppMessage<'TMessage> =
@@ -90,12 +90,12 @@ module Fable =
     let withSubscriber subscriberId subscriber app =
         let subsribers = app.Subscribers |> Map.add subscriberId subscriber
         { app with Subscribers = subsribers }
-    
+
     /// Scheduler helper
     /// This scheduler allow us to send a PingIn message to delay the call of a callback
-    let createScheduler() = 
+    let createScheduler() =
       MailboxProcessor.Start(fun inbox ->
-        let rec loop() = 
+        let rec loop() =
           async {
             let! message = inbox.Receive()
             match message with
@@ -112,7 +112,7 @@ module Fable =
       // We check that we have a pixi renderer
       let canvas =
         match state.Renderer with
-        | None -> 
+        | None ->
           console.error "You need to provide a renderer. See function withStartRenderer"
           raise (exn "You need to provide a renderer. See function withStartRenderer")
         | Some renderer -> renderer.view
@@ -129,7 +129,7 @@ module Fable =
       ActionReceived msg |> (notify state.Subscribers)
       let (model', actions') = state.Update state.Model msg
       // Determine the renderState
-      let renderState = 
+      let renderState =
         match state.RenderState with
         | NoRequest ->
           schedule()
@@ -173,18 +173,18 @@ module Fable =
         ///  Helpers to post a message in the app
         let post message =
           inbox.Post (Message message)
-        
+
         /// Helper to notify the subscribers
         let notifySubscribers subs model =
           subs |> Map.iter (fun key handler -> handler model)
-        
+
         /// Init the producers
         app.Producers |> List.iter (fun p -> p post)
 
         /// Function used to delay the Draw action (60fps based)
         let schedule() = scheduler.Post(PingIn(1000./60., (fun() -> inbox.Post(Draw))))
 
-        let rec loop state = 
+        let rec loop state =
           async {
             match state.Canvas with
             /// If this is the first loop
@@ -193,7 +193,7 @@ module Fable =
               return! loop state'
             /// Else the app is already init
             | Some node ->
-              /// Wait for a message  
+              /// Wait for a message
               let! message = inbox.Receive()
               match message with
               /// If the message if of type Message handle it (use of Update here)
@@ -231,7 +231,7 @@ module App =
       }
 
   /// List of the possible actions
-  type Actions 
+  type Actions
     = LevelUp
     | ResetGame
     | InitDone
@@ -243,13 +243,13 @@ module App =
     console.log (sprintf "Model: %A" model)
 
     // Standard update of the model
-    let model' = 
+    let model' =
       match action with
       // On level up we add one level
       | LevelUp ->
         { model with Level = model.Level + 1 }
       // On reset the game we reset the model
-      | ResetGame -> 
+      | ResetGame ->
         Model.Initial
       // When the first init of the view is done
       | InitDone ->
@@ -262,28 +262,28 @@ module App =
         if not model.IsGameOver then
           let newCount = model.Count + value
           { model with Count = newCount }
-        else 
+        else
           model
 
     /// Here we are handling the actions which tirgger others actions
     let delayedCall push =
       match action with
       // When we receive a tick
-      | Tick _ -> 
+      | Tick _ ->
         // Apply a pattern over the new value of count (note the usage of model' )
         match model'.Count with
         // If the value is over 20., we lose so push the action GameOver
         | x when x > 20. ->
           push(GameOver)
         // Else we check if we leveled up
-        | value -> 
+        | value ->
           let nextLevel = (Math.floor(value) |> int) % 2 = 0
           if nextLevel then
             push(LevelUp)
       | _ -> ()
 
     model', delayedCall |> toActionList
-    
+
   /// Function used to generate the basic view (this is used for the first draw of the app
   let initView (model: Model) (objects: Dictionary<string, Container>) post (stage: Container) =
     let levelText = new Text(sprintf "Current level: %i" model.Level)
@@ -337,13 +337,19 @@ module App =
       objects.["gameoverText2"].visible <- model.IsGameOver
 
   // Push a tick in the GameApp every 1000/60 seconds
-  let tickProducer push =
-    window.setInterval((fun _ ->
-        push(Tick 0.1)
-        null
-      )
-    , 1000./60.) |> ignore
+  let rec tickProducer push =
+    push(Tick 0.1)
+    window.requestAnimationFrame(fun _ -> tickProducer push) |> ignore
     ()
+
+    (*
+      window.setInterval((fun _ ->
+          push(Tick 0.1)
+          null
+        )
+      , 1000./60.) |> ignore
+      *)
+
 
   let options = [
     BackgroundColor (float 0x1099bb)
