@@ -13,6 +13,7 @@ open Fable.Core
 open Fable.Import.Browser
 open Fable.Import.PIXI
 open System.Collections.Generic
+open System
 
 [<AutoOpen>]
 module Fable =
@@ -27,9 +28,14 @@ module Fable =
     type AppEvents<'TMessage, 'TModel> =
       | ModelChanged of 'TModel*'TModel
       | ActionReceived of 'TMessage
+      | Ticked
       | DrawStarted
 
     type Subscriber<'TMessage, 'TModel> = AppEvents<'TMessage, 'TModel> -> unit
+
+    type RenderState = 
+        | InProgress
+        | NoRequest
 
     type App<'TModel, 'TMessage, 'TDisplayAction> =
       {
@@ -37,7 +43,7 @@ module Fable =
         Display: 'TModel -> 'TDisplayAction list -> ResizeArray<obj> -> ('TMessage -> unit) -> Container -> unit
         Objects: ResizeArray<obj>
         Stage: Container
-        Update: 'TModel -> 'TMessage -> ('TModel * Action<'TMessage> list * 'TDisplayAction list)
+        Update: 'TModel -> 'TMessage option -> ('TModel * Action<'TMessage> list * 'TDisplayAction list)
         InitMessage : (('TMessage -> unit) -> unit) option
         Actions: Action<'TMessage> list
         DisplayActions: 'TDisplayAction list
@@ -46,6 +52,7 @@ module Fable =
         NodeSelector: string option
         Renderer: SystemRenderer option
         Canvas: HTMLCanvasElement option
+        RenderState: RenderState
       }
 
     type ScheduleMessage =
@@ -55,6 +62,7 @@ module Fable =
       | AddSubscriber of string*Subscriber<'TMessage, 'TMessage>
       | RemoveSubscriber of string
       | Message of 'TMessage
+      | Tick
       | Draw
 
     let createApp model view update =
@@ -72,6 +80,7 @@ module Fable =
         DisplayActions = []
         Renderer = None
         Canvas = None
+        RenderState = NoRequest
       }
 
     let withStartNodeSelector selector app =
@@ -124,12 +133,32 @@ module Fable =
       | Some init -> init post
       { state with Canvas = Some canvas }
 
-    let handleMessage msg notify state =
-      ActionReceived msg |> (notify state.Subscribers)
-      let (model', actions', displayAction') = state.Update state.Model msg
+    let handleRenderState schedule state =
+      match state.RenderState with
+      | NoRequest ->
+        schedule(Draw)
+        InProgress
+      | InProgress -> InProgress
 
+    let handleMessage msg notify schedule state =
+      ActionReceived msg |> (notify state.Subscribers)
+      let (model', actions', displayAction') = state.Update state.Model (Some msg)
+      let renderState' = handleRenderState schedule state
       // Return the new state
       { state with
+          RenderState = renderState'
+          Model = model'
+          Actions = state.Actions @ actions'
+          DisplayActions = state.DisplayActions @ displayAction'
+      }
+
+    let handleTick notify schedule state =
+      Ticked |> (notify state.Subscribers)
+      let (model', actions', displayAction') = state.Update state.Model None
+      let renderState' = handleRenderState schedule state
+      // Return the new state
+      { state with
+          RenderState = renderState'
           Model = model'
           Actions = state.Actions @ actions'
           DisplayActions = state.DisplayActions @ displayAction'
@@ -147,7 +176,7 @@ module Fable =
       state.Actions |> List.iter (fun i -> i post)
       // Notify the subscribers
       (ModelChanged (model, state.Model)) |> notify state.Subscribers
-      { state with Actions = []; DisplayActions = [] }
+      { state with Actions = []; DisplayActions = []; RenderState = NoRequest }
 
     let start app =
       // Deduce the startElement
@@ -171,7 +200,7 @@ module Fable =
         app.Producers |> List.iter (fun p -> p post)
 
         /// Function used to delay the Draw action (60fps based)
-        let schedule() = scheduler.Post(PingIn((fun _ -> inbox.Post(Draw))))
+        let schedule(msg) = scheduler.Post(PingIn((fun _ -> inbox.Post(msg))))
 
         let rec loop state =
           async {
@@ -180,7 +209,7 @@ module Fable =
             | None ->
               let state' = createFirstLoopState startElem post state
               // Trigger the first draw
-              schedule ()
+              schedule (Draw)
               return! loop state'
             /// Else the app is already init
             | Some node ->
@@ -189,23 +218,32 @@ module Fable =
               match message with
               /// If the message if of type Message handle it (use of Update here)
               | Message msg ->
-                console.log "kok"
-                let state' = handleMessage msg notifySubscribers state
+                let state' = handleMessage msg notifySubscribers schedule state
+                return! loop state'
+              | Tick ->
+                let state' = handleTick notifySubscribers schedule state
                 return! loop state'
               /// If the message if of type Draw handle it (use of View here)
               | Draw ->
                 let state' = handleDraw post notifySubscribers state
                 // Trigger the next draw
-                schedule ()
+                schedule (Tick)
                 return! loop state'
               | _ -> return! loop state
           }
         loop app // Kick start the Mailbox
       )
 
+  // Helper to use in the Update function
+  // This help handling Message calls over the Tick
+  let handleAction (model: 'TModel) (action: 'TMessage option) (x: Func<'TMessage, ('TModel * 'TDisplayAction list)>)  =
+    if action.IsSome then
+      x.Invoke(action.Value)
+    else
+      model, []
+
 module App =
 
-  open System
   open Fable.Import.JS
 
   /// Model of the app
@@ -229,22 +267,29 @@ module App =
   type DisplayActions
     = AddBunnies
     | InitView
-
+    
   /// Function supporting the updates logic of the app
   let update model action =
-    // Standard update of the model
-    let model', displayAction' =
-      match action with
-      // On reset the game we reset the model
-      | ResetGame ->
-        Model.Initial, DisplayActions.InitView |> toActionList
-      // When the first init of the view is done
-      | InitDone(stageWidth, stageHeight) ->
-        { model with StageBox=Rectangle(0.,0., stageWidth, stageHeight) }, []
-      // Add bunnies
-      | Actions.AddBunnies shouldAdd ->
-        { model with MousePressed = shouldAdd }, []
 
+    // Handle update with message
+    let model', displayAction' = 
+      let t = 
+        Func<_,_>(fun act ->
+          match act with
+          // On reset the game we reset the model
+          | ResetGame ->
+            Model.Initial, DisplayActions.InitView |> toActionList
+          // When the first init of the view is done
+          | InitDone(stageWidth, stageHeight) ->
+            { model with StageBox=Rectangle(0.,0., stageWidth, stageHeight) }, []
+          // Add bunnies
+          | Actions.AddBunnies shouldAdd ->
+            { model with MousePressed = shouldAdd }, []
+        )
+      handleAction model action t
+
+    // Handle tick part of the update
+    // This should be executed even without message informations
     let bunniesAction = 
       if model'.MousePressed then 
         DisplayActions.AddBunnies |> toActionList 
@@ -264,28 +309,10 @@ module App =
   renderer.view.style.display <- "block"
   renderer.view.style.margin <- "0 auto"
 
-  // Use to store the Id of used for the mouse
-  let mutable mouseDownID = -1.
-
-  // While the mouse is down we add bunnies
-  let rec whileMouseIsDown post =
-    post(Actions.AddBunnies true)
-    mouseDownID <- window.requestAnimationFrame(fun _ -> whileMouseIsDown post)
-
   /// Function used to generate the basic view (this is used for the first draw of the app
   let initView (post: Actions -> unit) =
-    renderer.view.onmousedown <- 
-      fun _ ->
-        if (mouseDownID = -1.) then
-          whileMouseIsDown post |> ignore
-        null
-
-    renderer.view.onmouseup <- 
-      fun _ ->
-        if mouseDownID <> -1. then
-          window.cancelAnimationFrame(mouseDownID)
-          mouseDownID <- -1.
-        null
+    renderer.view.onmousedown <- fun _ -> post(Actions.AddBunnies true); null
+    renderer.view.onmouseup <- fun _ -> post(Actions.AddBunnies false); null
       
     // Notify the app that we finished to init the view
     post(InitDone(renderer.view.width, renderer.view.height))
