@@ -307,7 +307,7 @@ module App =
   renderer.view.style.display <- "block"
   renderer.view.style.margin <- "0 auto"
 
-  let stats = Stats()
+  let stats = new Stats()
   let wabbitTexture = Texture.fromImage("./public/bunny.png")
 
   /// Function used to generate the basic view (this is used for the first draw of the app
