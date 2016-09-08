@@ -38,8 +38,8 @@ module Fable =
     type App<'TModel, 'TMessage> =
       {
         Model: 'TModel
-        View: 'TModel -> Dictionary<string, Container> -> ('TMessage -> unit) -> Container -> unit
-        Objects: Dictionary<string, Container>
+        View: 'TModel -> ResizeArray<obj> -> ('TMessage -> unit) -> Container -> unit
+        Objects: ResizeArray<obj>
         Stage: Container
         Update: 'TModel -> 'TMessage -> ('TModel * Action<'TMessage> list)
         InitMessage : (('TMessage -> unit) -> unit) option
@@ -53,7 +53,7 @@ module Fable =
       }
 
     type ScheduleMessage =
-      | PingIn of float*(unit -> unit)
+      | PingIn of (float -> unit)
 
     type AppMessage<'TMessage> =
       | AddSubscriber of string*Subscriber<'TMessage, 'TMessage>
@@ -65,7 +65,7 @@ module Fable =
       {
         Model = model
         View = view
-        Objects = Dictionary<string, Container>()
+        Objects = ResizeArray<obj>()
         Stage = new Container()
         Update = update
         NodeSelector = None
@@ -99,8 +99,8 @@ module Fable =
           async {
             let! message = inbox.Receive()
             match message with
-            | PingIn (milliseconds, cb) ->
-              window.setTimeout(cb, milliseconds) |> ignore
+            | PingIn cb ->
+              window.requestAnimationFrame(new FrameRequestCallback(cb)) |> ignore
               return! loop()
           }
         loop()
@@ -182,7 +182,7 @@ module Fable =
         app.Producers |> List.iter (fun p -> p post)
 
         /// Function used to delay the Draw action (60fps based)
-        let schedule() = scheduler.Post(PingIn(1000./60., (fun() -> inbox.Post(Draw))))
+        let schedule() = scheduler.Post(PingIn((fun _ -> inbox.Post(Draw))))
 
         let rec loop state =
           async {
@@ -220,6 +220,8 @@ module App =
       Level: int
       IsInit: bool
       IsGameOver: bool
+      IsAdding:bool
+      StageBox:Rectangle
     }
 
     /// Generate an initial model
@@ -228,20 +230,21 @@ module App =
         Level = 0
         IsInit = false
         IsGameOver = false
+        IsAdding= false
+        StageBox = Rectangle(0.,0.,0.,0.)
       }
 
   /// List of the possible actions
   type Actions
     = LevelUp
     | ResetGame
-    | InitDone
+    | InitDone of float * float
+    | AddBunnies of bool
     | GameOver
     | Tick of float
 
   /// Function supporting the updates logic of the app
   let update model action =
-    console.log (sprintf "Model: %A" model)
-
     // Standard update of the model
     let model' =
       match action with
@@ -252,8 +255,12 @@ module App =
       | ResetGame ->
         Model.Initial
       // When the first init of the view is done
-      | InitDone ->
-        { model with IsInit = true }
+      | InitDone(stageWidth, stageHeight) ->
+        { model with IsInit = true ; StageBox=Rectangle(0.,0., stageWidth, stageHeight) }
+
+      | AddBunnies add ->
+        { model with IsAdding = add }
+
       // On game over
       | GameOver ->
         { model with IsGameOver = true }
@@ -284,73 +291,6 @@ module App =
 
     model', delayedCall |> toActionList
 
-  /// Function used to generate the basic view (this is used for the first draw of the app
-  let initView (model: Model) (objects: Dictionary<string, Container>) post (stage: Container) =
-    let levelText = new Text(sprintf "Current level: %i" model.Level)
-    levelText.x <- 50.
-    levelText.y <- 50.
-    objects.Add("levelText", levelText)
-    stage.addChild(levelText) |> ignore
-
-    let countText = new Text(sprintf "CountValue: %f" model.Count)
-    countText.x <- 50.
-    countText.y <- 100.
-    objects.Add("countText", countText)
-    stage.addChild(countText) |> ignore
-
-    let gameOverText1 = new Text(sprintf "GAME OVER !")
-    gameOverText1.x <- 200.
-    gameOverText1.y <- 200.
-    gameOverText1.visible <- false
-    objects.Add("gameoverText1", gameOverText1)
-    stage.addChild(gameOverText1) |> ignore
-
-    let gameOverText2 = new Text("Click me to play again")
-    gameOverText2.x <- 150.
-    gameOverText2.y <- 250.
-    gameOverText2.visible <- false
-    objects.Add("gameoverText2", gameOverText2)
-    stage.addChild(gameOverText2) |> ignore
-
-    gameOverText2.interactive <- true
-    /// When the player click on the text, push the action ResetGame in the App
-    gameOverText2.on_click(Func<_,_> (fun _ ->
-      post(ResetGame)
-    )) |> ignore
-
-    // Notify the app that we finished to init the view
-    post(InitDone)
-
-  /// Function used to handle the view updates
-  let view (model: Model) (objects: Dictionary<string, Container>) post (stage: Container) =
-    /// If the view has never been init
-    if not model.IsInit then
-      // Clear all the stage children (useful for support of ResetGame)
-      stage.removeChildren(0., float stage.children.Count) |> ignore
-      initView model objects post stage
-    else
-      /// Else update the object in the view
-      (objects.["levelText"] :?> Text).text <- sprintf "Current level: %i" model.Level
-      (objects.["countText"] :?> Text).text <- sprintf "CountValue: %f" model.Count
-
-      objects.["gameoverText1"].visible <- model.IsGameOver
-      objects.["gameoverText2"].visible <- model.IsGameOver
-
-  // Push a tick in the GameApp every 1000/60 seconds
-  let rec tickProducer push =
-    push(Tick 0.1)
-    window.requestAnimationFrame(fun _ -> tickProducer push) |> ignore
-    ()
-
-    (*
-      window.setInterval((fun _ ->
-          push(Tick 0.1)
-          null
-        )
-      , 1000./60.) |> ignore
-      *)
-
-
   let options = [
     BackgroundColor (float 0x1099bb)
     Resolution 1.
@@ -362,6 +302,47 @@ module App =
 
   renderer.view.style.display <- "block"
   renderer.view.style.margin <- "0 auto"
+
+  /// Function used to generate the basic view (this is used for the first draw of the app
+  let initView (model: Model) (objects: ResizeArray<obj>) (post: Actions -> unit) (stage: Container)  =
+    renderer.view.onmousedown <- fun _ -> post(AddBunnies(true)); null
+    renderer.view.onmouseup <- fun _ -> post(AddBunnies(false)); null
+    // Notify the app that we finished to init the view
+    post(InitDone(renderer.view.width, renderer.view.height))
+
+
+  let wabbitTexture = Texture.fromImage("./public/bunny.png")
+
+  /// Function used to handle the view updates
+  let view (model: Model) (objects: ResizeArray<obj>) (post: Actions -> unit) (stage: Container)  =
+    /// If the view has never been init
+    if not model.IsInit then
+      // Clear all the stage children (useful for support of ResetGame)
+      stage.removeChildren(0., float stage.children.Count) |> ignore
+      initView model objects post stage
+    else
+      let count : int = objects.Count - 1
+      for i in 0..count do
+        let bunny = unbox<Sprite> objects.[i]
+        bunny.rotation <- bunny.rotation + 0.1
+
+      if model.IsAdding then
+        for i in 0..10 do
+          let bunny = Sprite(wabbitTexture)
+          stage.addChild( bunny) |> ignore
+          objects.Add(bunny)
+          bunny.tint <- Math.random() * (float 0xFFFFFF)
+          bunny.position <- Point(Math.random() * model.StageBox.width, Math.random() * model.StageBox.height)
+          bunny.rotation <- Math.random() * 1.
+          bunny.anchor <- Point(0.5,0.5)
+
+  // Push a tick in the GameApp every 1000/60 seconds
+  let rec tickProducer push =
+    push(Tick 0.1)
+    window.requestAnimationFrame(fun _ -> tickProducer push) |> ignore
+    ()
+
+
 
   // Here we create the application for Fable Architecture
   createApp Model.Initial view update
