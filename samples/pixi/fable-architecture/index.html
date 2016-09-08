@@ -21,13 +21,15 @@
     <script src="../../node_modules/requirejs/require.js"></script>
 
     <script>
+
       requirejs.config({
         // Set the baseUrl to the path of the compiled JS code
         baseUrl: 'public',
         paths: {
           // Explicit path to core lib (relative to baseUrl, omit .js)
           'fable-core': '../../../node_modules/fable-core/fable-core.min',
-          'PIXI': '../../../node_modules/pixi.js/bin/pixi.min'
+          'PIXI': '../../../node_modules/pixi.js/bin/pixi.min',
+          'Stats': './stats.min'
         }
       });
       // Load the entry file of the app (use array, omit .js)

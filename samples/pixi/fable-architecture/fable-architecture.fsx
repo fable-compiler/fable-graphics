@@ -8,10 +8,12 @@
 
 #r "../../node_modules/fable-core/Fable.Core.dll"
 #load "../../node_modules/fable-import-pixi/Fable.Import.Pixi.fs"
+#load "./bindings/Fable.Import.Stats.fs"
 
 open Fable.Core
 open Fable.Import.Browser
 open Fable.Import.PIXI
+open Fable.Import.Stats
 open System.Collections.Generic
 
 [<AutoOpen>]
@@ -106,9 +108,11 @@ module Fable =
         loop()
       )
 
+
     /// Function used on the first loop
     /// This function init the page by adding the view in the DOM and the app
     let createFirstLoopState (startElem:Node) post state =
+
       // We check that we have a pixi renderer
       let canvas =
         match state.Renderer with
@@ -303,15 +307,20 @@ module App =
   renderer.view.style.display <- "block"
   renderer.view.style.margin <- "0 auto"
 
+  let stats = Stats()
+  let wabbitTexture = Texture.fromImage("./public/bunny.png")
+
   /// Function used to generate the basic view (this is used for the first draw of the app
   let initView (model: Model) (objects: ResizeArray<obj>) (post: Actions -> unit) (stage: Container)  =
+
+    stats.showPanel( 0. ) // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild( unbox<Node> stats.dom  ) |> ignore
+
     renderer.view.onmousedown <- fun _ -> post(AddBunnies(true)); null
     renderer.view.onmouseup <- fun _ -> post(AddBunnies(false)); null
     // Notify the app that we finished to init the view
     post(InitDone(renderer.view.width, renderer.view.height))
 
-
-  let wabbitTexture = Texture.fromImage("./public/bunny.png")
 
   /// Function used to handle the view updates
   let view (model: Model) (objects: ResizeArray<obj>) (post: Actions -> unit) (stage: Container)  =
@@ -321,6 +330,9 @@ module App =
       stage.removeChildren(0., float stage.children.Count) |> ignore
       initView model objects post stage
     else
+      // update our FPS counter
+      stats.``begin``()
+
       let count : int = objects.Count - 1
       for i in 0..count do
         let bunny = unbox<Sprite> objects.[i]
@@ -335,6 +347,9 @@ module App =
           bunny.position <- Point(Math.random() * model.StageBox.width, Math.random() * model.StageBox.height)
           bunny.rotation <- Math.random() * 1.
           bunny.anchor <- Point(0.5,0.5)
+
+      stats.``end``() |> ignore
+      ()
 
   // Push a tick in the GameApp every 1000/60 seconds
   let rec tickProducer push =
