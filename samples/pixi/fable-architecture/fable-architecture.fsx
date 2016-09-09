@@ -8,11 +8,13 @@
 
 #r "../../node_modules/fable-core/Fable.Core.dll"
 #load "../../node_modules/fable-import-pixi/Fable.Import.Pixi.fs"
+//#load "./bindings/stats.js/Fable.Import.Stats.fs"
 
 open Fable.Core
 open Fable.Import.Browser
 open Fable.Import.PIXI
 open System.Collections.Generic
+open Fable.Core.JsInterop
 open System
 
 [<AutoOpen>]
@@ -246,23 +248,42 @@ module App =
 
   open Fable.Import.JS
 
+  type GraphicsModel = {
+    Bunnies : ResizeArray<Sprite>
+    BunniesContainer : ParticleContainer
+    BunnyTexture : Texture
+  }
+
   /// Model of the app
   type Model =
     { StageBox: Rectangle
       MousePressed: bool
+      CountBunnies: int
+      BunnyTint : float
+      Gfx : GraphicsModel
     }
 
     /// Generate an initial model
     static member Initial =
       { StageBox = Rectangle(0.,0.,0.,0.)
         MousePressed = false
+        CountBunnies = 0
+        BunnyTint = Math.random() * (float 0xFFFFFF)
+        Gfx =
+        {
+          Bunnies = ResizeArray()
+          BunniesContainer = ParticleContainer(500000.,[Scale true;Position true;Rotation true;Uvs true;Alpha true])
+          BunnyTexture = Texture.fromImage("./public/bunny.png")
+        }
       }
 
   /// List of the possible actions
   type Actions
     = ResetGame
+    | CountBunnies
     | InitDone of float * float
     | AddBunnies of bool
+    | IncreaseBunniesCounter of int
 
   type DisplayActions
     = AddBunnies
@@ -277,8 +298,19 @@ module App =
         Func<_,_>(fun act ->
           match act with
           // On reset the game we reset the model
+          | CountBunnies ->
+            console.log(model.CountBunnies)
+            model,[]
+
           | ResetGame ->
             Model.Initial, DisplayActions.InitView |> toActionList
+
+          | IncreaseBunniesCounter addedBunnies ->
+
+            let newCount = model.CountBunnies + addedBunnies
+            //document.getElementById("counter").innerHTML <- sprintf "%i" newCount
+            { model with CountBunnies = newCount; BunnyTint = Math.random() * (float 0xFFFFFF) }, []
+
           // When the first init of the view is done
           | InitDone(stageWidth, stageHeight) ->
             { model with StageBox=Rectangle(0.,0., stageWidth, stageHeight) }, []
@@ -297,60 +329,71 @@ module App =
 
     model', [], bunniesAction @ displayAction'
 
-  let options = [
-    BackgroundColor (float 0x1099bb)
-    Resolution 1.
-  ]
 
+  // TODO: isn't there a better place to put the renderer?
   let renderer =
-    Globals.autoDetectRenderer( 620., 400., options )
+    Globals.autoDetectRenderer( window.innerWidth, window.innerHeight, [BackgroundColor (float 0x1099bb);Resolution 1.] )
     |> unbox<SystemRenderer>
 
   renderer.view.style.display <- "block"
   renderer.view.style.margin <- "0 auto"
 
   /// Function used to generate the basic view (this is used for the first draw of the app
-  let initView (post: Actions -> unit) =
+  let initView (post: Actions -> unit) (model:Model) (stage:Container)=
     renderer.view.onmousedown <- fun _ -> post(Actions.AddBunnies true); null
-    renderer.view.onmouseup <- fun _ -> post(Actions.AddBunnies false); null
+    renderer.view.onmouseup <- fun _ ->
+      post(Actions.AddBunnies false)
+      post(Actions.CountBunnies)
+      null
+
+    // add our particleContainer
+    stage.addChild(model.Gfx.BunniesContainer) |> ignore
 
     // Notify the app that we finished to init the view
     post(InitDone(renderer.view.width, renderer.view.height))
 
 
-  let wabbitTexture = Texture.fromImage("./public/bunny.png")
-
   /// Function used to handle the view updates
   let updateDisplay (model: Model) (displayActions: DisplayActions list) (objects: ResizeArray<obj>) (post: Actions -> unit) (stage: Container) =
+
     // Update all the bunnies rotation
-    let count : int = objects.Count - 1
+    let bunnies = model.Gfx.Bunnies
+    let count : int = bunnies.Count - 1
     for i in 0..count do
-      let bunny = unbox<Sprite> objects.[i]
-      bunny.rotation <- bunny.rotation + 0.1
+      let bunny = unbox<Sprite> bunnies.[i]
+      let rotationSpeed = unbox<float> bunny?rotationSpeed
+      bunny.rotation <- bunny.rotation + 0.1 * rotationSpeed
 
     // Process the displayActions
     let rec processActions actions =
       match actions with
       | x::xs ->
         match x with
+
         // Add the bunnies
         | DisplayActions.AddBunnies ->
-          for i in 0..10 do
-            let bunny = Sprite(wabbitTexture)
-            stage.addChild( bunny) |> ignore
-            objects.Add(bunny)
-            bunny.tint <- Math.random() * (float 0xFFFFFF)
+
+            let bunny = Sprite(model.Gfx.BunnyTexture)
+            model.Gfx.BunniesContainer.addChild( bunny) |> ignore
+            bunnies.Add(bunny)
+            bunny?rotationSpeed <- Math.random() * 2.
+            bunny?alpha <- Math.min(1., unbox<float> bunny?rotationSpeed)
+            // bunny.tint <- model.BunnyTint
             bunny.position <- Point(Math.random() * model.StageBox.width, Math.random() * model.StageBox.height)
             bunny.rotation <- Math.random() * 1.
             bunny.anchor <- Point(0.5,0.5)
+
+            post(IncreaseBunniesCounter 10)
         // User ask to reset the view
         | DisplayActions.InitView ->
           // Clear all the stage children (useful for support of ResetGame)
           stage.removeChildren(0., float stage.children.Count) |> ignore
-          initView post
+
+          initView post model stage
         | a -> console.error (sprintf "Unknow DisplaysAction: %A" a)
         processActions xs
       | [] -> ()
+
 
     processActions displayActions
 
@@ -359,6 +402,8 @@ module App =
     document.addEventListener_keypress(Func<_,_>(fun ev ->
       if ev.keyCode = 114. || ev.which = 114. then
         push ResetGame
+      elif ev.keyCode = 115. || ev.which = 115. then
+          push CountBunnies
       null
     ))
 

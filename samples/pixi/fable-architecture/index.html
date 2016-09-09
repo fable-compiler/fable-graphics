@@ -16,11 +16,14 @@
 
     <!-- [body] -->
     <div id="game"></div>
+    <div id="counter"></div>
+
     <!-- [/body] -->
     <script src="../../node_modules/core-js/client/core.min.js"></script>
     <script src="../../node_modules/requirejs/require.js"></script>
 
     <script>
+      (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()    
 
       requirejs.config({
         // Set the baseUrl to the path of the compiled JS code
