@@ -253,5 +253,7 @@ paket-files/
 docs/output
 temp/
 **/public/*.js
+**/public/**/*.js
 **/public/*.js.map
+**/public/**/*.js.map
 .DS_Store

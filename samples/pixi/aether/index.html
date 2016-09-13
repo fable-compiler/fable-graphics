@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Fable + Pixi + Aether</title>
+    <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+  </head>
+  <body>
+
+    <!-- [body] -->
+    <div id="game"></div>
+    <!-- [/body] -->
+    <script src="../../node_modules/core-js/client/core.min.js"></script>
+    <script src="../../node_modules/requirejs/require.js"></script>
+
+    <script>
+      requirejs.config({
+        // Set the baseUrl to the path of the compiled JS code
+        baseUrl: 'public',
+        paths: {
+          // Explicit path to core lib (relative to baseUrl, omit .js)
+          'fable-core': '../../../node_modules/fable-core/fable-core.min',
+          'PIXI': '../../../node_modules/pixi.js/bin/pixi.min'
+        }
+      });
+      // Load the entry file of the app (use array, omit .js)
+      requirejs(["sample"]);
+    </script>
+  </body>
+</html>
