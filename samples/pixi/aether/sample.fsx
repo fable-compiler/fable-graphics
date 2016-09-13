@@ -24,8 +24,11 @@ let options = [
   Resolution 1.
 ]
 
+let width = 800.
+let height = 600.
+
 let renderer =
-  Globals.autoDetectRenderer( 800., 600., options )
+  Globals.autoDetectRenderer( width, height, options )
   |> unbox<SystemRenderer>
 
 let gameDiv = document.getElementById("game")
@@ -37,18 +40,37 @@ let rectangle1 = Graphics()
 let rectangle2 = Graphics()
 let rectangle3 = Graphics()
 
-type Rectangle = 
+type Point = 
   { X: float
     Y: float
-    Width: float
-    Height: float
   }
 
-  static member X_ =
-    (fun rect-> rect.X), (fun x rect -> rect?X <- x; rect)
+  static member X_ = 
+    (fun point -> point.X), (fun x point -> point?X <- x; point)
 
-  static member Y_ =
-    (fun rect-> rect.Y), (fun y rect -> rect?Y <- y; rect)
+  static member Y_ = 
+    (fun point -> point.Y), (fun y point -> point?Y <- y; point)
+
+  static member XY_ =
+    (fun point -> (point.X, point.Y)), (fun (x, y) point -> 
+                                                            point?X <- x
+                                                            point?Y <- y
+                                                            point)
+
+  static member Create(x,y) =
+    { X = x
+      Y = y
+    }
+
+type Rectangle = 
+  { Origin: Point
+    Width: float
+    Height: float
+    Graphic: Graphics
+  }
+
+  static member Origin_ =
+    (fun rect-> rect.Origin), (fun origin rect -> rect?Origin <- origin; rect)
 
   static member Width_ =
     (fun rect-> rect.Width), (fun width rect -> rect?Width <- width; rect)
@@ -57,40 +79,140 @@ type Rectangle =
     (fun rect-> rect.Height), (fun height rect -> rect?Height <- height; rect)
 
   static member Create(x, y, w, h) =
-    { X = x
-      Y = y
+    { Origin = Point.Create(x, y)
       Width = w
       Height = h
+      Graphic = Graphics()
     }
 
-type Game =
-  { Rect1: Rectangle
-    Rect2: Rectangle
-    Rect3: Rectangle
+  member x.Render() =
+    x.Graphic
+      .beginFill(float 0x451245)
+      .drawRect(x.Origin.X, x.Origin.Y, x.Width, x.Height)
+      .endFill()
+    |> ignore
+
+type Mouse =
+  { ButtonLeft: bool
+    ButtonRight: bool
+    Position: Point
   }
 
-  static member Rect1_ =
-    (fun game -> game.Rect1), (fun rect (game: Game) -> game?Rect1 <- rect; game)
+  static member ButtonLeft_ =
+    (fun x -> x.ButtonLeft), (fun btn mouse-> { mouse with ButtonLeft = btn } )
 
-  static member Rect2_ =
-    (fun game -> game.Rect2), (fun rect (game: Game) -> game?Rect2 <- rect; game)
+  static member ButtonRight_ =
+    (fun x -> x.ButtonRight), (fun btn mouse -> { mouse with ButtonRight = btn } )
 
-  static member Rect3_ =
-    (fun game -> game.Rect3), (fun rect (game: Game) -> game?Rect3 <- rect; game)
+  static member Position_ =
+    (fun x -> x.Position), (fun pos mouse -> { mouse with Position = pos })
 
-let game =
-  { Rect1 = Rectangle.Create(20., 100., 100., 20.)
-    Rect2 = Rectangle.Create(20., 200., 100., 40.)
-    Rect3 = Rectangle.Create(20., 300., 100., 120.)
-  }  
+  static member Create() =
+    { ButtonLeft = false
+      ButtonRight = false
+      Position = Point.Create(0., 0.)
+    }
+
+type GameState =
+  { FollowRect: Rectangle
+    Stage: Container
+    Mouse: Mouse
+  }
+
+  static member FollowRect_ =
+    (fun game -> game.FollowRect), (fun rect (game: GameState) -> game?FollowRect <- rect; game)
+
+  static member Mouse_ =
+    (fun game -> game.Mouse), (fun mouse game -> game?Mouse <- mouse; game)     
+
+  static member Create() = 
+    { FollowRect = Rectangle.Create(20., 20., 50., 50.)
+      Stage = Container()
+      Mouse = Mouse.Create()
+    }
+
+  member x.Render() =
+    x.FollowRect.Render()
+
+  member x.UpdateMouseRightBtn (newState: bool) =
+    Optic.set (GameState.Mouse_ >-> Mouse.ButtonRight_) newState x |> ignore
+
+  member x.UpdateMouseLeftBtn (newState: bool) =
+    Optic.set (GameState.Mouse_ >-> Mouse.ButtonLeft_) newState x |> ignore
+
+  member x.UpdateMousePosition pos =
+    Optic.set (GameState.Mouse_ >-> Mouse.Position_ >-> Point.XY_) pos x |> ignore
+
+  member x.InitStage() = 
+    x.Stage.addChild(x.FollowRect.Graphic) |> ignore
+    x.Stage.hitArea <- Rectangle(0., 0., width, height)
+    x.Stage.interactive <- true 
+    
+    // Handle mouse right button
+    x.Stage.on_rightdown(Func<_,_>(fun _ ->
+      x.UpdateMouseRightBtn(true)
+    )) |> ignore
+
+    x.Stage.on_rightup(Func<_,_>(fun _ ->
+      x.UpdateMouseRightBtn(false)
+    )) |> ignore
+
+
+    // Handle mouse button
+    x.Stage.on_mousedown(Func<_,_>(fun ev ->
+      let event = unbox<MouseEvent> ev.data?originalEvent
+      if event.button = 0. then
+        x.UpdateMouseLeftBtn(true)
+    )) |> ignore
+
+    x.Stage.on_mouseup(Func<_,_>(fun ev ->
+      let event = unbox<MouseEvent> ev.data?originalEvent
+      if event.button = 0. then
+        x.UpdateMouseLeftBtn(false)
+    )) |> ignore
+
+
+    x
+
+let mutable lastUpdate = 0.
+
+let delta dt =
+  let r = dt - lastUpdate
+  lastUpdate <- dt
+  r / 10.
+
+let gameState = 
+  GameState.Create().InitStage()
+
+/// Disable context menu when right clicking the canvas
+renderer.view.addEventListener_contextmenu(Func<_,_>(fun ev ->
+  ev.stopPropagation()
+  ev.preventDefault()
+  null
+))
+
+renderer.view.addEventListener_mousemove(Func<_,_>(fun ev -> 
+//  x.Stage.on(
+//      "mousemove", 
+//      unbox (fun ev -> 
+//        let event = unbox<MouseEvent> ev?data?originalEvent
+//        x.UpdateMousePosition(event.offsetX, event.offsetY)
+//      )
+//    ) |> ignore
+  null
+))
 
 let rec animate (dt:float) =
   window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
-  
-  Optic.set (Game.Rect1_ >-> Rectangle.X_) (game.Rect1.X + 1.) game |> ignore
-  
+  let delta = delta dt
+
+  //Optic.set (Game.Rect1_ >-> Rectangle.Width_) (game.Rect1.Width - 1. * delta) game |> ignore
+
+  gameState.Render()
   // render the container
-  renderer.render(stage)
+  renderer.render(gameState.Stage)
+
+  console.log gameState.Mouse.Position
 
 // start animating
 animate 0.
