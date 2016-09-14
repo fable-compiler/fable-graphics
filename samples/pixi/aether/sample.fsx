@@ -34,12 +34,7 @@ let renderer =
 let gameDiv = document.getElementById("game")
 gameDiv.appendChild( renderer.view )
 
-// create the root of the scene graph
-let stage = Container()
-let rectangle1 = Graphics()
-let rectangle2 = Graphics()
-let rectangle3 = Graphics()
-
+[<CustomEquality; NoComparison>]
 type Point = 
   { X: float
     Y: float
@@ -60,6 +55,47 @@ type Point =
   static member Create(x,y) =
     { X = x
       Y = y
+    }
+
+  member x.ToXY() =
+    (x.X, x.Y)
+
+  /// Custom equality method
+  override x.Equals(yobj) =
+    match yobj with
+    | :? Point as y -> x.X = y.X && x.Y = y.Y
+    | _ -> false
+
+  /// Implemented because needed when overriding Equals
+  override x.GetHashCode() = failwith "Not supported"
+
+/// Structure used to store a Vector2
+type Vector2D =
+  { X: float
+    Y: float
+  }
+
+  /// Create a Vector2D
+  static member Create(x, y) =
+    { X = x
+      Y = y
+    }
+
+  /// Create a Vector2D from two points. (direction is p1 to p2)
+  static member CreateFrom2Point((p1: Point), (p2: Point)) =
+    { X = p2.X - p1.X
+      Y = p2.Y - p1.Y
+    }
+
+  /// Calculate the Length of a Vector2D
+  member x.Length() =
+    let square x : float = x * x 
+    Math.Sqrt( (square x.X) + (square x.Y) )
+
+  /// Normalize a Vector. Force X and Y to be between -1 and 1.
+  member x.Normalize() =
+    { X = x.X / x.Length()
+      Y = x.Y / x.Length()
     }
 
 type Rectangle = 
@@ -85,72 +121,31 @@ type Rectangle =
       Graphic = Graphics()
     }
 
+  /// Render the rectangle
   member x.Render() =
     x.Graphic
+      .clear()
       .beginFill(float 0x451245)
       .drawRect(x.Origin.X, x.Origin.Y, x.Width, x.Height)
       .endFill()
     |> ignore
 
-type Vector2 =
-  { X: float
-    Y: float
-  }
-
-  static member Create(x, y) =
-    { X = x
-      Y = y
-    }
-
-  static member CreateFrom2Point((p1: Point), (p2: Point)) =
-    { X = p2.X - p1.X
-      Y = p2.Y - p1.Y
-    }
-
-  member x.Length() =
-    let square x : float = x * x 
-    Math.Sqrt( (square x.X) + (square x.Y) )
-
-  member x.Normalize() =
-    { X = x.X / x.Length()
-      Y = x.Y / x.Length()
-    }
-
-type Mouse =
-  { ButtonLeft: bool
-    ButtonRight: bool
-    Position: Point
-  }
-
-  static member ButtonLeft_ =
-    (fun x -> x.ButtonLeft), (fun btn mouse-> { mouse with ButtonLeft = btn } )
-
-  static member ButtonRight_ =
-    (fun x -> x.ButtonRight), (fun btn mouse -> { mouse with ButtonRight = btn } )
-
-  static member Position_ =
-    (fun x -> x.Position), (fun pos mouse -> { mouse with Position = pos })
-
-  static member Create() =
-    { ButtonLeft = false
-      ButtonRight = false
-      Position = Point.Create(0., 0.)
-    }
+  /// Update the Origin coordinate to move at destination point. Based on time update
+  member x.Move(dest: Point, dt) =
+    let dir = Vector2D.CreateFrom2Point(x.Origin, dest).Normalize()
+    let x' = Math.Ceiling(x.Origin.X + dir.X * 2. * dt)
+    let y' = Math.Ceiling(x.Origin.Y + dir.Y * 2. * dt)
+    Optic.set (Rectangle.Origin_ >-> Point.XY_) (x', y') x
+    |> ignore
 
 type GameState =
   { FollowRect: Rectangle
     Stage: Container
-    Mouse: Mouse
-    OriginMovement: Point
     mutable Destination: Point option
-    mutable Direction: Vector2 option
   }
 
   static member FollowRect_ =
     (fun game -> game.FollowRect), (fun rect (game: GameState) -> game?FollowRect <- rect; game)
-
-  static member Mouse_ =
-    (fun game -> game.Mouse), (fun mouse game -> game?Mouse <- mouse; game)     
 
   static member Destination_ =
     (fun game -> game.Destination.Value), (fun destination game -> game?Destination <- destination; game)
@@ -158,53 +153,32 @@ type GameState =
   static member Create() = 
     { FollowRect = Rectangle.Create(20., 20., 50., 50.)
       Stage = Container()
-      Mouse = Mouse.Create()
-      OriginMovement = Point.Create(20., 20.)
       Destination = None
-      Direction = None
     }
 
   member x.Render() =
     x.FollowRect.Render()
 
-  member x.UpdateMouseRightBtn (newState: bool) =
-    Optic.set (GameState.Mouse_ >-> Mouse.ButtonRight_) newState x |> ignore
-
-  member x.UpdateMouseLeftBtn (newState: bool) =
-    Optic.set (GameState.Mouse_ >-> Mouse.ButtonLeft_) newState x |> ignore
-
-  member x.UpdateMousePosition pos =
-    Optic.set (GameState.Mouse_ >-> Mouse.Position_ >-> Point.XY_) pos x |> ignore
-
+  /// Method used to initialize the Stage. Add listener, enable interactivity
   member x.InitStage() = 
+    /// Instruction text
+    let txt = Fable.Import.PIXI.Text("Click and watch the rectangle going to clicked place")
+    txt.x <- 70.
+    txt.y <- 500.
+    
+    /// Add graphics
     x.Stage.addChild(x.FollowRect.Graphic) |> ignore
+    x.Stage.addChild(txt) |> ignore
+
+    /// Enable interactivity
     x.Stage.hitArea <- Rectangle(0., 0., width, height)
     x.Stage.interactive <- true 
     
-    // Handle mouse right button
-    x.Stage.on_rightdown(Func<_,_>(fun _ ->
-      x.UpdateMouseRightBtn(true)
-    )) |> ignore
-
-    x.Stage.on_rightup(Func<_,_>(fun _ ->
-      x.UpdateMouseRightBtn(false)
-    )) |> ignore
-
-
     // Handle mouse button
     x.Stage.on_mousedown(Func<_,_>(fun ev ->
       let event = unbox<MouseEvent> ev.data?originalEvent
       if event.button = 0. then
-        x.UpdateMouseLeftBtn(true)
-        let dest = Point.Create(event.offsetX, event.offsetY)
-        x.Direction <- Some (Vector2.CreateFrom2Point(x.FollowRect.Origin, dest).Normalize())
-        x.Destination <- Some (dest)
-    )) |> ignore
-
-    x.Stage.on_mouseup(Func<_,_>(fun ev ->
-      let event = unbox<MouseEvent> ev.data?originalEvent
-      if event.button = 0. then
-        x.UpdateMouseLeftBtn(false)
+        x.Destination <- Some (Point.Create(event.offsetX, event.offsetY))
     )) |> ignore
 
     x
@@ -220,29 +194,40 @@ let delta dt =
 
 let gameState = 
   GameState.Create().InitStage()
-
-/// Disable context menu when right clicking the canvas
-renderer.view.addEventListener_contextmenu(Func<_,_>(fun ev ->
-  ev.stopPropagation()
-  ev.preventDefault()
-  null
-))
-
-/// Use mouve event from HTML Dom to limit it to the game view
-renderer.view.addEventListener_mousemove(Func<_,_>(fun ev -> 
-  gameState.UpdateMousePosition(ev.offsetX, ev.offsetY)
-  null
-))
-
+  
 let rec animate (dt:float) =
   window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
   let delta = delta dt
 
-  //Optic.set (Game.Rect1_ >-> Rectangle.Width_) (game.Rect1.Width - 1. * delta) game |> ignore
-
   if gameState.Destination.IsSome then
-    ()
+    gameState.FollowRect.Move(gameState.Destination.Value, delta)
+    // If one of the coordinate is NaN then the Rectangle is at Destination
+    if Fable.Import.JS.Number.isNaN(gameState.FollowRect.Origin.X) || Fable.Import.JS.Number.isNaN(gameState.FollowRect.Origin.Y) then
+      // For the Origin to be at Destination
 
+      (*
+        The next line is using Aether Lenses to support updates of Origin point
+
+        The equivalent code, if we were using purely functionnal and immutable state here would have been:
+        
+          { gameState with
+              FollowRect = {
+                gameState.FollowRect with
+                  Origin = {
+                    gameState.FollowRect.Origin with
+                      X = newX
+                      Y = newY
+                  }
+              }
+          }
+          
+          Here thanks to the combinaison of Fable and Ather we can hide the implementation. 
+          Here we looks like using purely functionnal and immutable state but we are in fact using only dynamicProgramming.
+      *)
+      Optic.set (GameState.FollowRect_ >-> Rectangle.Origin_ >-> Point.XY_) (gameState.Destination.Value.ToXY()) gameState |> ignore
+      // Remove Destination information
+      gameState.Destination <- None
+        
   
   gameState.Render()
   // render the container
