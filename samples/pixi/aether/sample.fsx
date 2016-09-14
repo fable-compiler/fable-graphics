@@ -92,6 +92,30 @@ type Rectangle =
       .endFill()
     |> ignore
 
+type Vector2 =
+  { X: float
+    Y: float
+  }
+
+  static member Create(x, y) =
+    { X = x
+      Y = y
+    }
+
+  static member CreateFrom2Point((p1: Point), (p2: Point)) =
+    { X = p2.X - p1.X
+      Y = p2.Y - p1.Y
+    }
+
+  member x.Length() =
+    let square x : float = x * x 
+    Math.Sqrt( (square x.X) + (square x.Y) )
+
+  member x.Normalize() =
+    { X = x.X / x.Length()
+      Y = x.Y / x.Length()
+    }
+
 type Mouse =
   { ButtonLeft: bool
     ButtonRight: bool
@@ -117,6 +141,9 @@ type GameState =
   { FollowRect: Rectangle
     Stage: Container
     Mouse: Mouse
+    OriginMovement: Point
+    mutable Destination: Point option
+    mutable Direction: Vector2 option
   }
 
   static member FollowRect_ =
@@ -125,10 +152,16 @@ type GameState =
   static member Mouse_ =
     (fun game -> game.Mouse), (fun mouse game -> game?Mouse <- mouse; game)     
 
+  static member Destination_ =
+    (fun game -> game.Destination.Value), (fun destination game -> game?Destination <- destination; game)
+
   static member Create() = 
     { FollowRect = Rectangle.Create(20., 20., 50., 50.)
       Stage = Container()
       Mouse = Mouse.Create()
+      OriginMovement = Point.Create(20., 20.)
+      Destination = None
+      Direction = None
     }
 
   member x.Render() =
@@ -163,6 +196,9 @@ type GameState =
       let event = unbox<MouseEvent> ev.data?originalEvent
       if event.button = 0. then
         x.UpdateMouseLeftBtn(true)
+        let dest = Point.Create(event.offsetX, event.offsetY)
+        x.Direction <- Some (Vector2.CreateFrom2Point(x.FollowRect.Origin, dest).Normalize())
+        x.Destination <- Some (dest)
     )) |> ignore
 
     x.Stage.on_mouseup(Func<_,_>(fun ev ->
@@ -171,11 +207,12 @@ type GameState =
         x.UpdateMouseLeftBtn(false)
     )) |> ignore
 
-
     x
 
+/// Memorize lastUpdate time
 let mutable lastUpdate = 0.
 
+/// Calculate delta interval for time based updated
 let delta dt =
   let r = dt - lastUpdate
   lastUpdate <- dt
@@ -191,14 +228,9 @@ renderer.view.addEventListener_contextmenu(Func<_,_>(fun ev ->
   null
 ))
 
+/// Use mouve event from HTML Dom to limit it to the game view
 renderer.view.addEventListener_mousemove(Func<_,_>(fun ev -> 
-//  x.Stage.on(
-//      "mousemove", 
-//      unbox (fun ev -> 
-//        let event = unbox<MouseEvent> ev?data?originalEvent
-//        x.UpdateMousePosition(event.offsetX, event.offsetY)
-//      )
-//    ) |> ignore
+  gameState.UpdateMousePosition(ev.offsetX, ev.offsetY)
   null
 ))
 
@@ -208,11 +240,13 @@ let rec animate (dt:float) =
 
   //Optic.set (Game.Rect1_ >-> Rectangle.Width_) (game.Rect1.Width - 1. * delta) game |> ignore
 
+  if gameState.Destination.IsSome then
+    ()
+
+  
   gameState.Render()
   // render the container
   renderer.render(gameState.Stage)
-
-  console.log gameState.Mouse.Position
 
 // start animating
 animate 0.
