@@ -77,7 +77,7 @@ module PIXI =
         abstract data: obj (*InteractionData*) with get, set
         abstract stopPropagation: unit -> unit
 
-    type EventEmitter() =
+    type [<Import("EventEmitter","PIXI")>] EventEmitter() =
         member __.listeners(``event``: string): ResizeArray<Function> = failwith "JS only"
         member __.emit(``event``: string, [<ParamArray>] args: obj[]): bool = failwith "JS only"
         member __.on(``event``: string, fn: Function, ?context: obj): EventEmitter = failwith "JS only"
@@ -87,7 +87,7 @@ module PIXI =
         member __.off(``event``: string, ?fn: Function, ?context: obj, ?once: bool): EventEmitter = failwith "JS only"
         member __.addListener(``event``: string, fn: Function, ?context: obj): EventEmitter = failwith "JS only"
 
-    and DisplayObject() =
+    and [<Import("DisplayObject","PIXI")>] DisplayObject() =
         inherit EventEmitter()
         // interface interaction.InteractiveTarget
         member __._originalRenderWebGL with get(): WebGLRenderer = failwith "JS only" and set(v: WebGLRenderer): unit = failwith "JS only"
