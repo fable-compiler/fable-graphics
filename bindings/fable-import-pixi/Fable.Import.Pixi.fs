@@ -12,6 +12,7 @@ open Fable.Core
 open Fable.Import.JS
 open Fable.Import.Browser
 
+[<Erase>]
 module PIXI =
     type RendererType =
         abstract member UNKNOWN: float
