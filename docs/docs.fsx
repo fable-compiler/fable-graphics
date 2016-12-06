@@ -173,23 +173,6 @@ let generateStaticPages siteRoot force () =
 // --------------------------------------------------------------------------------------
 
 
-/// Install 'core-js' and 'requirejs' into temp & copy the JS files
-/// into the output folder (we may need to add more dependencies here)
-let copySharedScripts () =
-    CleanDir temp
-    // Npm.run temp "init" ["--yes"]
-    // Npm.install
-    //     temp
-    //     [
-    //         "core-js@^2.4.1"
-    //         "fable-compiler@^0.7.19"
-    //         "fable-core@^0.7.15"
-    //         "fable-import-pixi@^0.0.10"
-    //         "babel-plugin-transform-runtime@^6.15.0"
-    //         "pixi.js@3.0.11"
-    //     ]
-
-
 /// Extract string (from HTML page) enclosed between
 /// <!-- [tag] --> and <!-- [/tag] -->
 let extractMarkedPagePart tag (page:string) =
@@ -361,7 +344,6 @@ Target "CleanDocs" (fun _ ->
 )
 
 Target "GenerateDocs" (fun _ ->
-    copySharedScripts ()
     prepareDependencies ()
     generateStaticPages publishSite true ()
     generateSamplePages publishSite true ()
@@ -370,7 +352,6 @@ Target "GenerateDocs" (fun _ ->
 Target "BrowseDocs" (fun _ ->
     // Update static pages & sample pages (but don't recompile JS)
     let root = "http://localhost:8911"
-    copySharedScripts ()
     prepareDependencies ()
     generateStaticPages root true ()
     generateSamplePages root false ()
