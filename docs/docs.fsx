@@ -178,15 +178,6 @@ let generateStaticPages siteRoot force () =
 let copySharedScripts () =
     CleanDir temp
     Npm.run temp "init" ["--yes"]
-    Npm.install temp ["core-js"; "requirejs"; "fable-core"]
-
-    ensureDirectory (output </> "samples" </> "scripts")
-    temp </> "node_modules/core-js/client/core.min.js"
-    |> CopyFile (output </> "samples" </> "scripts" </> "core.min.js")
-    temp </> "node_modules/requirejs/require.js"
-    |> CopyFile (output </> "samples" </> "scripts" </> "require.js")
-    temp </> "node_modules/fable-core/fable-core.min.js"
-    |> CopyFile (output </> "samples" </> "scripts" </> "fable-core.min.js")
 
 
 /// Extract string (from HTML page) enclosed between
@@ -203,7 +194,7 @@ let compileSample copyOutput name path outerDir =
     CleanDir temp
     System.Environment.CurrentDirectory <- fableRoot
 
-
+    Npm.install path []
     Npm.run path "run" ["build"]
     // NpmHelper.Npm (fun p ->
     //     { p with
@@ -214,12 +205,6 @@ let compileSample copyOutput name path outerDir =
     ensureDirectory (output </> "samples" </> outerDir </> name)
 
     if copyOutput then
-        // Copy compiled JavaScript files
-        // Attention, for some reason it seems !!(temp </> "*.*") doesn't work properly in OSX
-        // !!(temp </> "*.*") |> CopyFiles (output </> "samples" </> name)
-//        directoryCopy(temp, path </> "samples" </> name </> "public", true)
-
-        // Copy subdirectories and static files (except for special ones)
         Directory.GetDirectories(path)
         |> Seq.filter (fun d -> not (d.EndsWith("out")) && not (d.EndsWith("node_modules")))
         |> Seq.iter (fun d -> CopyDir (output </> "samples" </> outerDir </> name </> (Path.GetFileName d)) d (fun _ -> true))
@@ -241,7 +226,7 @@ type Sample =
     GithubLink : string
     Introduction : string
     Document : string
-    RequirePaths : string
+    ExternalScript: string
     Application : string
     Head : string
     AppStyle : string }
@@ -263,25 +248,34 @@ let generateSamplePage siteRoot dir name (path: string) outerDir =
 
     // If there is `index.html` page, read `<!-- [body] -->` bit from it
     let (app, appHead), appStyle =
-      let index = fableRoot </> path </> "index.html"
-      ( if File.Exists index then
-           let indexHtml = File.ReadAllText(index)
-           extractMarkedPagePart "body" indexHtml,
-           extractMarkedPagePart "head" indexHtml
-        else "", "" ),
-      ( if attrs.ContainsKey("app-style") then attrs.["app-style"] else "" )
+        let index = fableRoot </> path </> "index.html"
+        ( if File.Exists index then
+            let indexHtml = File.ReadAllText(index)
+            extractMarkedPagePart "body" indexHtml,
+            extractMarkedPagePart "head" indexHtml
+            else "", "" ),
+        ( if attrs.ContainsKey("app-style") then attrs.["app-style"] else "" )
 
     let githubLink = sprintf "https://github.com/fable-compiler/fable-graphics/tree/master/samples/%s/%s" dir name
     // Require paths are specified using ` .. ` - drop <code>
     let requirePaths =
-      if not (attrs.ContainsKey("require-paths")) then "" else
-      Regex.Match(attrs.["require-paths"], "<code>(.*)</code>").Groups.[1].Value
+        if not (attrs.ContainsKey("require-paths")) then "" else
+        Regex.Match(attrs.["require-paths"], "<code>(.*)</code>").Groups.[1].Value
+
+    let externalScript =
+        if not (attrs.ContainsKey("external-script")) then "" else
+        Regex.Match(attrs.["external-script"], "<code>(.*)</code>").Groups.[1].Value
+    
+
+    Console.WriteLine(externalScript)
+    
 
     // Get `title` and `tagline` from the attrs and generate sample page
     let html =
         { Root = siteRoot;
           Active = "samples"; Name = name; Document = document
-          Application = app; Head = appHead; RequirePaths = requirePaths
+          Application = app; Head = appHead
+          ExternalScript = externalScript
           Title = attrs.["title"]
           GithubLink = githubLink
           Introduction = if attrs.ContainsKey("intro") then attrs.["intro"] else ""

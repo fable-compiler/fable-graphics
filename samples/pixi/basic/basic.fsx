@@ -2,18 +2,20 @@
  - title: Basic sample
  - tagline: Basic sample implemented with fable-pixi
  - app-style: width:800px; margin:20px auto 50px auto;
- - require-paths: `'PIXI':'https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min'`
+ - external-script: `"https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min.js"`
  - intro: This is a port from [basic sample](http://pixijs.github.io/examples/#/basics/basic.js)
 *)
 
-#r "../../node_modules/fable-core/Fable.Core.dll"
-#load "../../node_modules/fable-import-pixi/Fable.Import.Pixi.fs"
+#r "./node_modules/fable-core/Fable.Core.dll"
+#load "./node_modules/fable-import-pixi/Fable.Import.Pixi.fs"
 
 open System
 open Fable.Core
 open Fable.Core.JsInterop
 open Fable.Import.PIXI
 open Fable.Import.Browser
+
+importAll "core-js"
 
 let options = [
   BackgroundColor (float 0x1099bb)

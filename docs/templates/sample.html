@@ -3,8 +3,6 @@
   <title>{{ model.Title }} - F# |> BABEL</title>
   {{ model.Head }}
   <meta name="description" content="{{ model.Tagline }}">
-  <script src="../../scripts/core.min.js"></script>
-  <script src="../../scripts/require.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -28,18 +26,13 @@
     <div class="col-md-1 col-lg-2"></div>
   </div>
 
+  <script src={{ model.ExternalScript }}></script>
+
   <div class="row">
     <div class="col-sm-12">
       <div class="app-container" style="{{ model.AppStyle }}">
         {{ model.Application }}
       </div>
-      <script>
-        requirejs.config({
-          baseUrl: 'public',
-          paths: { 'fable-core': '../../../scripts/fable-core.min', {{ model.RequirePaths }} }
-        });
-        requirejs(["{{ model.Name }}"]);
-      </script>
     </div>
   </div>
 
