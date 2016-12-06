@@ -2,7 +2,7 @@
  - title: Dragging sample
  - tagline: Basic sample implemented with fable-pixi
  - app-style: width:800px; margin:20px auto 50px auto;
- - require-paths: `'PIXI':'https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min'`
+ - external-script: `"https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min.js"`
  - intro: This is a port from [dragging sample](http://pixijs.github.io/examples/#/demos/dragging.js)
 *)
 
@@ -15,6 +15,8 @@ open Fable.Core.JsInterop
 open Fable.Import.PIXI
 open Fable.Import.Browser
 open Fable.Import.JS
+
+importAll "core-js"
 
 let renderer =
   Globals.autoDetectRenderer( 800., 600. )

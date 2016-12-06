@@ -2,7 +2,7 @@
  - title: Particle Container sample
  - tagline: Basic sample implemented with fable-pixi
  - app-style: width:800px; margin:20px auto 50px auto;
- - require-paths: `'PIXI':'https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min'`
+ - external-script: `"https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min.js"`
  - intro: This is a port from [Particle Container sample](http://pixijs.github.io/examples/#/demos/batch-v3.js)
 *)
 
@@ -15,6 +15,8 @@ open Fable.Core.JsInterop
 open Fable.Import.PIXI
 open Fable.Import.Browser
 open Fable.Import.JS
+
+importAll "core-js"
 
 let isWebGL, renderer =
   match Globals.autoDetectRenderer(800., 600.) with
@@ -100,18 +102,18 @@ let animate =
       let dude = maggots.[i]
       dude.scale.y <-
         0.95 + Math.sin(tick + unbox dude?offset) * 0.05
-      
+
       dude?direction <-
         (unbox dude?direction) + (unbox dude?turningSpeed) * 0.01
-      
+
       dude.position.x <-
         dude.position.x + Math.sin(unbox dude?direction)
         * (unbox dude?speed) * dude.scale.y
-      
+
       dude.position.y <-
         dude.position.y + Math.cos(unbox dude?direction)
         * (unbox dude?speed) * dude.scale.y
-      
+
       dude.rotation <-
         -(unbox dude?direction) - Math.PI
 
@@ -125,12 +127,12 @@ let animate =
       then dude.position.y <- dude.position.y + dudeBounds.height
       elif (dude.position.y > dudeBounds.y + dudeBounds.height)
       then dude.position.y <- dude.position.y - dudeBounds.height
-    
+
     // increment the ticker
     tick <- tick + 0.1
     window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
     renderer.render(stage)
-  
+
   animate // Return `animate` function with `tick` trapped in a closure
 
 // start animating
