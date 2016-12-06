@@ -45,7 +45,8 @@ let temp        = fableRoot </> "temp"
 let samplesRoot = fableRoot </> "samples"
 
 let samples =
-    [ "samples/pixi/basic", "pixi"
+    [ "samples/d3/barchart", "d3"
+      "samples/pixi/basic", "pixi"
       "samples/pixi/graphics", "pixi"
       "samples/pixi/dragging", "pixi"
       "samples/pixi/blur-filter", "pixi"
@@ -178,7 +179,7 @@ let generateStaticPages siteRoot force () =
 let copySharedScripts () =
     CleanDir temp
     Npm.run temp "init" ["--yes"]
-    Npm.install temp ["core-js"; "requirejs"; "fable-core"]
+    Npm.install temp ["core-js"; "requirejs"; "fable-core@0.5.4"]
 
     ensureDirectory (output </> "samples" </> "scripts")
     temp </> "node_modules/core-js/client/core.min.js"

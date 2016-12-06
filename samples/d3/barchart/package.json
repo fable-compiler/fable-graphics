@@ -1,0 +1,18 @@
+{
+    "private": true,
+    "name": "fable-d3-samples",
+    "version": "0.0.1",
+    "description": "Creating bar chart using D3 bindings",
+    "main": "index.js",
+    "scripts": {
+        "build": "node ./node_modules/fable-compiler --target umd",
+        "start": "node ../../server"
+    },
+    "author": "Leo Lorenzo Luis",
+    "license": "MIT",
+    "dependencies": {
+        "fable-import-d3": "0.0.4",
+        "fable-compiler": "^0.7.7",
+        "fable-core": "^0.7.6"
+    }
+}

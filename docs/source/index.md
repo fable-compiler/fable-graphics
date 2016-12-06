@@ -22,7 +22,7 @@ request [for the samples directory](https://github.com/fable-compiler/fable-grap
 
 ### d3.js
 
-*No sample available for the moment*
+* [Bar chart](samples/d3/barchart/index.html)
 
 ### PixiJS
 

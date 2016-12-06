@@ -1,0 +1,16 @@
+{
+  "sourceMaps": true,
+  "targets": {
+    "umd": {
+      "projFile": "./barchart.fsx",
+      "rollup": {
+        "dest": "./public/Main.js",
+        "external": ["d3"],
+        "globals": {
+          "d3": "d3"
+        },
+        "format": "umd"
+      }
+    }
+  }
+}
