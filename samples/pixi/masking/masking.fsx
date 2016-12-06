@@ -6,8 +6,8 @@
  - intro: This is a port from [Masking sample](http://pixijs.github.io/examples/#/demos/masking.js)
 *)
 
-#r "./node_modules/fable-core/Fable.Core.dll"
-#load "./node_modules/fable-import-pixi/Fable.Import.Pixi.fs"
+#r "../../node_modules/fable-core/Fable.Core.dll"
+#load "../../node_modules/fable-import-pixi/Fable.Import.Pixi.fs"
 
 open System
 open Fable.Core
@@ -16,6 +16,8 @@ open Fable.Import
 open Fable.Import.PIXI
 open Fable.Import.Browser
 open Fable.Import.JS
+
+importAll "core-js"
 
 let renderer = WebGLRenderer( 800., 600. )
 
@@ -127,7 +129,7 @@ let animate =
 
     window.requestAnimationFrame(FrameRequestCallback animate) |> ignore
     renderer.render(stage)
-  
+
   animate // Return `animate` function with `count` trapped in a closure
 
 // start animating

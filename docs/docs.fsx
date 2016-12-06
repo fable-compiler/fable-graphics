@@ -53,7 +53,7 @@ let samples =
       "samples/pixi/movieclip", "pixi"
       "samples/pixi/particle-container", "pixi"
       "samples/pixi/render-texture", "pixi"
-      "samples/pixi/masking", "pixi" 
+      "samples/pixi/masking", "pixi"
     ]
 
 
@@ -177,7 +177,17 @@ let generateStaticPages siteRoot force () =
 /// into the output folder (we may need to add more dependencies here)
 let copySharedScripts () =
     CleanDir temp
-    Npm.run temp "init" ["--yes"]
+    // Npm.run temp "init" ["--yes"]
+    // Npm.install
+    //     temp
+    //     [
+    //         "core-js@^2.4.1"
+    //         "fable-compiler@^0.7.19"
+    //         "fable-core@^0.7.15"
+    //         "fable-import-pixi@^0.0.10"
+    //         "babel-plugin-transform-runtime@^6.15.0"
+    //         "pixi.js@3.0.11"
+    //     ]
 
 
 /// Extract string (from HTML page) enclosed between
@@ -187,21 +197,15 @@ let extractMarkedPagePart tag (page:string) =
     let mtch = Regex.Match(page, pattern, RegexOptions.Singleline)
     if mtch.Success then mtch.Groups.[1].Value else ""
 
+let prepareDependencies () =
+    Npm.run samplesRoot "i" []
 
 /// Compile sample using Fable & copy static and JS files to `samples/<name>`
-let compileSample copyOutput name path outerDir =
+let compileSample copyOutput name (path: string) outerDir =
     // Compile and copy JS files
-    CleanDir temp
     System.Environment.CurrentDirectory <- fableRoot
 
-    Npm.install path []
     Npm.run path "run" ["build"]
-    // NpmHelper.Npm (fun p ->
-    //     { p with
-    //         Command = (NpmHelper.Run "build")
-    //         WorkingDirectory = path
-    //     })
-//    NpmHelper.run (fun p -> ()) // fableRoot "fable" [path; "-o"; "../../../temp"; "--symbols"; "TUTORIAL"]
     ensureDirectory (output </> "samples" </> outerDir </> name)
 
     if copyOutput then
@@ -265,10 +269,7 @@ let generateSamplePage siteRoot dir name (path: string) outerDir =
     let externalScript =
         if not (attrs.ContainsKey("external-script")) then "" else
         Regex.Match(attrs.["external-script"], "<code>(.*)</code>").Groups.[1].Value
-    
 
-    Console.WriteLine(externalScript)
-    
 
     // Get `title` and `tagline` from the attrs and generate sample page
     let html =
@@ -361,6 +362,7 @@ Target "CleanDocs" (fun _ ->
 
 Target "GenerateDocs" (fun _ ->
     copySharedScripts ()
+    prepareDependencies ()
     generateStaticPages publishSite true ()
     generateSamplePages publishSite true ()
 )
@@ -369,6 +371,7 @@ Target "BrowseDocs" (fun _ ->
     // Update static pages & sample pages (but don't recompile JS)
     let root = "http://localhost:8911"
     copySharedScripts ()
+    prepareDependencies ()
     generateStaticPages root true ()
     generateSamplePages root false ()
 
