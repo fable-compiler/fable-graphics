@@ -2,12 +2,11 @@
  - title: Bar chart sample
  - tagline: Bar chart implemented using Fable-D3 bindings
  - app-style: width:800px; margin:20px auto 50px auto;
- - require-paths: `'d3':'https://d3js.org/d3.v3.min.js'`
  - intro: Creating a bar chart using Fable-D3 bindings
 *)
 
-#r "./node_modules/fable-core/Fable.Core.dll"
-#load "./node_modules/fable-import-d3/Fable.Import.D3.fs"
+#r "../../node_modules/fable-core/Fable.Core.dll"
+#load "../../node_modules/fable-import-d3/Fable.Import.D3.fs"
 
 open Fable.Core
 open Fable.Core.JsInterop
@@ -22,10 +21,10 @@ let width = 500.
 let height = 100.
 let dataSetLength = float dataset.Length
 
-let svg = D3.Globals.select("body")
+let svg = D3.Globals.select("#display")
                     .append("svg")
                     .attr("width", U3.Case1 width)
-                    .attr("height", U3.Case1 width)
+                    .attr("height", U3.Case1 height)
 
 svg.selectAll("rect")
     .data(dataset)

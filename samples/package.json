@@ -20,6 +20,7 @@
     "fable-compiler": "^0.7.19",
     "fable-core": "^0.7.15",
     "fable-import-pixi": "0.0.10",
-    "babel-plugin-transform-runtime": "^6.15.0"
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "fable-import-d3": "0.0.4"
   }
 }
