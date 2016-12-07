@@ -1,6 +1,13 @@
 {
-    "module": "amd",
-    "sourceMaps": true,
     "projFile": "./graphics.fsx",
-    "outDir": "public"
+    "sourceMaps": true,
+    "babelPlugins": ["transform-runtime"],
+    "rollup": {
+        "dest": "public/bundle.js",
+        // PIXI will be loaded directly from a script tag
+        "external": ["PIXI"],
+        "globals": {
+            "PIXI": "PIXI"
+        }
+    }
 }

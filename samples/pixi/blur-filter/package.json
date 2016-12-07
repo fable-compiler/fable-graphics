@@ -5,8 +5,8 @@
   "description": "F# port of pixi.js official samples",
   "main": "index.js",
   "scripts": {
-      "build": "node ../../node_modules/fable-compiler",
-      "start": "node ../../server"
+    "build": "node ../../node_modules/fable-compiler",
+    "start": "node ../../server"
   },
   "author": "François Nicaise",
   "license": "MIT"
