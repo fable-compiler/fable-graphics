@@ -45,7 +45,8 @@ let temp        = fableRoot </> "temp"
 let samplesRoot = fableRoot </> "samples"
 
 let samples =
-    [ "samples/pixi/basic", "pixi"
+    [ "samples/d3/barchart", "d3"
+      "samples/pixi/basic", "pixi"
       "samples/pixi/graphics", "pixi"
       "samples/pixi/dragging", "pixi"
       "samples/pixi/blur-filter", "pixi"
