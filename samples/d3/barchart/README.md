@@ -8,7 +8,7 @@
 
 * To start a local server and open a web with the sample, type: `npm start`
 
-> If you wan to listen for changes and recompile
+> If you want to listen for changes and recompile
 the F# code, you can use `npm build -- --watch`.
 Then you need to run `npm start` in a different
 terminal window.
