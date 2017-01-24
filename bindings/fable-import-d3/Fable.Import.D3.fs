@@ -6,6 +6,7 @@
 namespace Fable.Import
 
 open System
+open System.Text.RegularExpressions
 open Fable.Core
 open Fable.Import.JS
 open Fable.Import.Browser
@@ -24,24 +25,21 @@ module D3 =
         [<Emit("$0[$1]{{=$2}}")>] abstract Item: index: float -> (* TODO selection.Group *) obj with get, set
         abstract length: float with get, set
         abstract attr: name: string -> string
-        abstract attr: name: string * value: Primitive -> Selection<'Datum>
-        abstract attr: name: string * value: Func<'Datum, float, float, Primitive> -> Selection<'Datum>
+        abstract attr: name: string * value: obj -> Selection<'Datum>
         abstract attr: obj: obj -> Selection<'Datum>
         abstract classed: name: string -> bool
         abstract classed: name: string * value: bool -> Selection<'Datum>
         abstract classed: name: string * value: Func<'Datum, float, float, bool> -> Selection<'Datum>
         abstract classed: obj: obj -> Selection<'Datum>
         abstract style: name: string -> string
-        abstract style: name: string * value: Primitive * ?priority: string -> Selection<'Datum>
-        abstract style: name: string * value: Func<'Datum, float, float, Primitive> * ?priority: string -> Selection<'Datum>
+        abstract style: name: string * obj: Primitive * ?priority: string -> Selection<'Datum>
         abstract style: obj: obj * ?priority: string -> Selection<'Datum>
         abstract property: name: string -> obj
         abstract property: name: string * value: obj -> Selection<'Datum>
         abstract property: name: string * value: Func<'Datum, float, float, obj> -> Selection<'Datum>
         abstract property: obj: obj -> Selection<'Datum>
         abstract text: unit -> string
-        abstract text: value: Primitive -> Selection<'Datum>
-        abstract text: value: Func<'Datum, float, float, Primitive> -> Selection<'Datum>
+        abstract text: value: obj -> Selection<'Datum>
         abstract html: unit -> string
         abstract html: value: string -> Selection<'Datum>
         abstract html: value: Func<'Datum, float, float, string> -> Selection<'Datum>
@@ -71,7 +69,7 @@ module D3 =
         abstract selectAll: selector: string -> Selection<obj>
         abstract selectAll: selector: Func<'Datum, float, float, U2<EventTarget[], NodeList>> -> Selection<obj>
         abstract each: func: Func<'Datum, float, float, obj> -> Selection<'Datum>
-        abstract call: func: Func<Selection<'Datum>, obj, obj> * [<ParamArray>] args: obj[] -> Selection<'Datum>
+        abstract call: func: obj -> Selection<'Datum>
         abstract empty: unit -> bool
         abstract node: unit -> Node
         abstract size: unit -> float
@@ -455,7 +453,7 @@ module D3 =
         static member pairs(array: 'T[]): ('T * 'T)[] = failwith "JS only"
         static member nest(): Nest<'T> = failwith "JS only"
         static member transform(transform: string): Transform = failwith "JS only"
-        static member format(specifier: string): Func<float, string> = failwith "JS only"
+        static member format(specifier: string): Func<obj, string> = failwith "JS only"
         static member formatPrefix(value: float, ?precision: float): FormatPrefix = failwith "JS only"
         static member round(x: float, ?n: float): float = failwith "JS only"
         static member requote(string: string): string = failwith "JS only"
