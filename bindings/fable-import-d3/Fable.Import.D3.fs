@@ -1228,7 +1228,7 @@ module D3 =
             abstract x: x: float -> Line<'T>
             abstract x: x: Func<'T, float, float> -> Line<'T>
             abstract y: unit -> U2<float, Func<'T, float, float>>
-            abstract y: x: float -> Line<'T>
+            abstract y: y: float -> Line<'T>
             abstract y: y: Func<'T, float, float> -> Line<'T>
             abstract interpolate: unit -> U2<string, Func<(float * float)[], string>>
             [<Emit("$0.interpolate('linear')")>] abstract interpolate_linear: unit -> Line<'T>
