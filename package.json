@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fable-compiler/fable-react.git"
+    "url": "git+https://github.com/fable-compiler/fable-graphics.git"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/fable-graphics#readme",
   "devDependencies": {
-    "fable-core": "^0.5.4"
+    "fable-core": "^0.7.25"
   }
 }
