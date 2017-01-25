@@ -1,0 +1,21 @@
+{
+	"name": "fable-import-dimple",
+	"version": "0.0.1",
+	"description": "Fable bindings for dimple.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/fable/fable-graphics.git"
+	},
+	"keywords": [
+		"F#",
+		"Fable",
+		"d3",
+		"dimple"
+	],
+	"author": "Justin Sacks",
+	"license": "MIT"
+}

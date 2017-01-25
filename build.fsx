@@ -34,8 +34,7 @@ let deployDir = "./deploy/"
 
 // Filesets
 let appReferences  =
-    !! "/**/*.csproj"
-      ++ "/**/*.fsproj"
+    !! "/**/*.fsproj"
 
 // version info
 let version = "0.1"  // or retrieve from CI server
@@ -46,11 +45,14 @@ Target "Clean" (fun _ ->
 )
 
 Target "Npm" (fun _ ->
-    Npm (fun p ->
-            { p with
-                Command = Install Standard
-                WorkingDirectory = "./src/Fable.Import.Virtualdom/"
-            })
+    appReferences
+    |> Seq.iter (fun s ->
+                     let path = IO.Path.GetDirectoryName s
+                     Npm (fun p ->
+                          { p with
+                              Command = Install Standard
+                              WorkingDirectory = path
+                          }))
 )
 
 Target "Build" (fun _ ->
